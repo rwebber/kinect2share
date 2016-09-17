@@ -147,21 +147,23 @@ void ofApp::update() {
 	//Getting bones (connected joints)
 	//--
 	//
-	{
-		// Note that for this we need a reference of which joints are connected to each other.
-		// We call this the 'boneAtlas', and you can ask for a reference to this atlas whenever you like
-		auto bodies = kinect.getBodySource()->getBodies();
-		auto boneAtlas = ofxKinectForWindows2::Data::Body::getBonesAtlas();
 
-		for (auto body : bodies) {
-			for (auto bone : boneAtlas) {
-				auto firstJointInBone = body.joints[bone.first];
-				auto secondJointInBone = body.joints[bone.second];
+	//{
+	//	// Note that for this we need a reference of which joints are connected to each other.
+	//	// We call this the 'boneAtlas', and you can ask for a reference to this atlas whenever you like
+	//	auto bodies = kinect.getBodySource()->getBodies();
+	//	auto boneAtlas = ofxKinectForWindows2::Data::Body::getBonesAtlas();
 
-				//now do something with the joints
-			}
-		}
-	}
+	//	for (auto body : bodies) {
+	//		for (auto bone : boneAtlas) {
+	//			auto firstJointInBone = body.joints[bone.first];
+	//			auto secondJointInBone = body.joints[bone.second];
+
+	//			//now do something with the joints
+	//		}
+	//	}
+	//}
+
 	//
 	//--
 }
