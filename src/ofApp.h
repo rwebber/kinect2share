@@ -2,16 +2,18 @@
 
 #include "ofMain.h"
 #include "ofxKinectForWindows2.h"
-#include "ofxSpout2.h"
 #include "ofxOsc.h"
+#include "ofxGui.h"
+#include "ofxSpout2.h"
 
 class ofApp : public ofBaseApp {
 
 public:
+	ofxKFW2::Device kinect;
 	void setup();
 	void update();
 	void draw();
-
+	void exit(); // added
 	void keyPressed(int key);
 	void keyReleased(int key);
 	void mouseMoved(int x, int y);
@@ -24,8 +26,6 @@ public:
 
 	string escape_quotes(const string & before);
 
-	ofxKFW2::Device kinect;
-
 	// offscreen buffers (frame buffer object)
 	ofFbo fboDepth; // draw to for spout
 	ofFbo fboColor; // draw to for spout
@@ -35,4 +35,8 @@ public:
 
 	// OSC
 	ofxOscSender oscSender;
+
+	// GUI
+	ofxPanel gui;
+	ofxToggle jsonGrouped;
 };

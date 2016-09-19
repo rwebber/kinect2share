@@ -18,6 +18,11 @@ void ofApp::setup() {
 	fboColor.allocate(1920, 1080, GL_RGB); //setup offscreen buffer in openGL RGB mode
 
 	oscSender.setup("localhost", 1234);
+
+	gui.setup("Parameters", "settings.xml");
+	gui.add(jsonGrouped.setup("as JSON", false));
+
+	gui.loadFromFile("settings.xml");
 }
 
 
@@ -25,6 +30,8 @@ void ofApp::setup() {
 //--------------------------------------------------------------
 void ofApp::update() {
 	kinect.update();
+
+	if (jsonGrouped)
 
 	//--
 	//Getting joint positions (skeleton tracking)
@@ -76,14 +83,14 @@ void ofApp::update() {
 				// http://stackoverflow.com/questions/31121378/json-cpp-how-to-initialize-from-string-and-get-string-value
 				// http://uscilab.github.io/cereal/
 
-				ofxOscMessage m;
-				string adrs = "/" + to_string( body.bodyId ) + "/" + jointNames[joint.first];
-
 				// MORE joint. values >>>
 				// second. positionInWorld[] x y z , positionInDepthMap[] x y
 				// second. orientation. _v[] x y z w  ??what is this
 				// second. trackingState
 
+
+				ofxOscMessage m;
+				string adrs = "/" + to_string(body.bodyId) + "/" + jointNames[joint.first];
 				m.setAddress(adrs);
 				//float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 				//m.addFloatArg( r );
@@ -93,6 +100,8 @@ void ofApp::update() {
 				m.addFloatArg(pos.y);
 				m.addFloatArg(pos.z);
 				m.addStringArg(jointNames[joint.first]);
+				oscSender.sendMessage(m);
+
 
 				string name = jointNames[joint.first];
 				//jdata = "\"" + name + "\"," + to_string(pos.x) + "," + to_string(pos.y) + "," + to_string(pos.z);
@@ -104,16 +113,14 @@ void ofApp::update() {
 				jdata = "{" + jdata + "}";  
 				// format= {"\joint\":\"jointName\",\"x\":0.1,\"y\":0.2,\"z\":0.3 }
 
-
-				// if bdata = "" no comma
-				if (bdata == "") {
+				if (bdata == "") {  // if bdata = "" no comma
 					bdata = jdata;
 				}
 				else {
 					bdata = bdata + "," + jdata;
 				}
 
-				oscSender.sendMessage(m);
+				
 
 			} // end inner joints loop
 			
@@ -169,9 +176,10 @@ void ofApp::update() {
 }
 
 string ofApp::escape_quotes(const string &before)
+// sourced from: http://stackoverflow.com/questions/1162619/fastest-quote-escaping-implementation
 {
 	string after;
-	after.reserve(before.length() + 4);
+	after.reserve(before.length() + 4);  // TODO: may need to increase reserve...
 
 	for (string::size_type i = 0; i < before.length(); ++i) {
 		switch (before[i]) {
@@ -179,12 +187,10 @@ string ofApp::escape_quotes(const string &before)
 		case '\\':
 			after += '\\';
 			// Fall through.
-
 		default:
 			after += before[i];
 		}
 	}
-
 	return after;
 }
 
@@ -242,6 +248,12 @@ void ofApp::draw() {
 
 	// Draw bodies joints+bones over
 	// kinect.getBodySource()->drawProjected(previewWidth, previewHeight, previewWidth, previewHeight, ofxKFW2::ProjectionCoordinates::DepthCamera);
+
+	gui.draw();
+}
+
+void ofApp::exit() {
+	gui.saveToFile("settings.xml");
 }
 
 //--------------------------------------------------------------
