@@ -31,122 +31,118 @@ void ofApp::setup() {
 void ofApp::update() {
 	kinect.update();
 
-	if (jsonGrouped)
-
 	//--
 	//Getting joint positions (skeleton tracking)
 	//--
 	//
-	{
-		// *****************  ENUM copied from kinectv2 addon
-		//  JointType_SpineBase = 0,
-		//	JointType_SpineMid = 1,
-		//	JointType_Neck = 2,
-		//	JointType_Head = 3,
-		//	JointType_ShoulderLeft = 4,
-		//	JointType_ElbowLeft = 5,
-		//	JointType_WristLeft = 6,
-		//	JointType_HandLeft = 7,
-		//	JointType_ShoulderRight = 8,
-		//	JointType_ElbowRight = 9,
-		//	JointType_WristRight = 10,
-		//	JointType_HandRight = 11,
-		//	JointType_HipLeft = 12,
-		//	JointType_KneeLeft = 13,
-		//	JointType_AnkleLeft = 14,
-		//	JointType_FootLeft = 15,
-		//	JointType_HipRight = 16,
-		//	JointType_KneeRight = 17,
-		//	JointType_AnkleRight = 18,
-		//	JointType_FootRight = 19,
-		//	JointType_SpineShoulder = 20,
-		//	JointType_HandTipLeft = 21,
-		//	JointType_ThumbLeft = 22,
-		//	JointType_HandTipRight = 23,
-		//	JointType_ThumbRight = 24,
-		//	JointType_Count = (JointType_ThumbRight + 1)
 
-		const char * jointNames[] = { "SpineBase", "SpineMid", "Neck", "Head",
-			"ShoulderLeft", "ElbowLeft", "WristLeft", "HandLeft",
-			"ShoulderRight", "ElbowRight", "WristRight", "HandRight",
-			"HipLeft", "KneeLeft", "AnkleLeft", "FootLeft",
-			"HipRight", "KneeRight", "AnkleRight", "FootRight",
-			"SpineShoulder", "HandTipLeft", "ThumbLeft", "HandTipRight", "ThumbRight", "Count" };
+	// *****************  ENUM copied from kinectv2 addon
+	//  JointType_SpineBase = 0,
+	//	JointType_SpineMid = 1,
+	//	JointType_Neck = 2,
+	//	JointType_Head = 3,
+	//	JointType_ShoulderLeft = 4,
+	//	JointType_ElbowLeft = 5,
+	//	JointType_WristLeft = 6,
+	//	JointType_HandLeft = 7,
+	//	JointType_ShoulderRight = 8,
+	//	JointType_ElbowRight = 9,
+	//	JointType_WristRight = 10,
+	//	JointType_HandRight = 11,
+	//	JointType_HipLeft = 12,
+	//	JointType_KneeLeft = 13,
+	//	JointType_AnkleLeft = 14,
+	//	JointType_FootLeft = 15,
+	//	JointType_HipRight = 16,
+	//	JointType_KneeRight = 17,
+	//	JointType_AnkleRight = 18,
+	//	JointType_FootRight = 19,
+	//	JointType_SpineShoulder = 20,
+	//	JointType_HandTipLeft = 21,
+	//	JointType_ThumbLeft = 22,
+	//	JointType_HandTipRight = 23,
+	//	JointType_ThumbRight = 24,
+	//	JointType_Count = (JointType_ThumbRight + 1)
 
-		auto bodies = kinect.getBodySource()->getBodies();
-		for (auto body : bodies) {
-			string bdata = ""; // start JSON array build of body data
-			string jdata = ""; // start JSON array build of joints data
-			for (auto joint : body.joints) {
+	const char * jointNames[] = { "SpineBase", "SpineMid", "Neck", "Head",
+		"ShoulderLeft", "ElbowLeft", "WristLeft", "HandLeft",
+		"ShoulderRight", "ElbowRight", "WristRight", "HandRight",
+		"HipLeft", "KneeLeft", "AnkleLeft", "FootLeft",
+		"HipRight", "KneeRight", "AnkleRight", "FootRight",
+		"SpineShoulder", "HandTipLeft", "ThumbLeft", "HandTipRight", "ThumbRight", "Count" };
 
-				//TODO: implement switch for message type, and add a single JSON output for all data
-				// http://stackoverflow.com/questions/31121378/json-cpp-how-to-initialize-from-string-and-get-string-value
-				// http://uscilab.github.io/cereal/
+	// MORE joint. values >>>
+	// second. positionInWorld[] x y z , positionInDepthMap[] x y
+	// second. orientation. _v[] x y z w  ??what is this
+	// second. trackingState
 
-				// MORE joint. values >>>
-				// second. positionInWorld[] x y z , positionInDepthMap[] x y
-				// second. orientation. _v[] x y z w  ??what is this
-				// second. trackingState
+	// MORE body. values >>>
+	// body. tracked (bool)
+	// body. leftHandState (_Handstate) enum?
+	// body. rightHandState (_Handstate)
+	// body. activity  ??what is this
 
+					//TODO: implement switch for message type, and add a single JSON output for all data
+					// http://stackoverflow.com/questions/31121378/json-cpp-how-to-initialize-from-string-and-get-string-value
+					// http://uscilab.github.io/cereal/
 
+	if (jsonGrouped) {
+			auto bodies = kinect.getBodySource()->getBodies();
+			for (auto body : bodies) {
+				string bdata = ""; // start JSON array build of body data
+				string jdata = ""; // start JSON array build of joints data
+				for (auto joint : body.joints) {
+
+					auto pos = joint.second.getPositionInWorld();
+					string name = jointNames[joint.first];
+					//jdata = "\"" + name + "\"," + to_string(pos.x) + "," + to_string(pos.y) + "," + to_string(pos.z);
+					jdata = "\"joint\":";
+					jdata = jdata + "\"" + name + "\",";
+					jdata = jdata + "\"x\":" + to_string(pos.x) + ",";
+					jdata = jdata + "\"y\":" + to_string(pos.y) + ",";
+					jdata = jdata + "\"z\":" + to_string(pos.z);
+					jdata = "{" + jdata + "}";
+					// format= {"\joint\":\"jointName\",\"x\":0.1,\"y\":0.2,\"z\":0.3 }
+					if (bdata == "") {  // if bdata = "" no comma
+						bdata = jdata;
+					}
+					else {
+						bdata = bdata + "," + jdata;
+					}
+				} // end inner joints loop
+				// need to escape all " in bdata
+				bdata = escape_quotes(bdata);
+				bdata = "[" + bdata + "]";
+				bdata = "{\"body_" + to_string(body.bodyId) + "\": \"" + bdata + "\"}";
+				//cout << bdata << endl;
 				ofxOscMessage m;
-				string adrs = "/" + to_string(body.bodyId) + "/" + jointNames[joint.first];
+				//string adrs = "/body/" + to_string(body.bodyId);
+				string adrs = "/kinectV2/body/" + to_string(body.bodyId);
 				m.setAddress(adrs);
-				//float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-				//m.addFloatArg( r );
-				auto pos = joint.second.getPositionInWorld();
-				//m.addFloatArg(joint.second.positionInWorld.x);  // .x access allowed in watcher, but not here (positionInWorld is type protected in, class Jount)
-				m.addFloatArg(pos.x);
-				m.addFloatArg(pos.y);
-				m.addFloatArg(pos.z);
-				m.addStringArg(jointNames[joint.first]);
+				m.addStringArg(bdata);
 				oscSender.sendMessage(m);
+			} // end body loop
+	}else{
+			auto bodies = kinect.getBodySource()->getBodies();
+			for (auto body : bodies) {
+				for (auto joint : body.joints) {
+					auto pos = joint.second.getPositionInWorld();
+					ofxOscMessage m;
+					string adrs = "/" + to_string(body.bodyId) + "/" + jointNames[joint.first];
+					m.setAddress(adrs);
+					//float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+					//m.addFloatArg( r );
+					//m.addFloatArg(joint.second.positionInWorld.x);  // .x access allowed in watcher, but not here (positionInWorld is type protected in, class Jount)
+					m.addFloatArg(pos.x);
+					m.addFloatArg(pos.y);
+					m.addFloatArg(pos.z);
+					m.addStringArg(jointNames[joint.first]);
+					oscSender.sendMessage(m);
 
+				} // end inner joints loop
+			} // end body loop
 
-				string name = jointNames[joint.first];
-				//jdata = "\"" + name + "\"," + to_string(pos.x) + "," + to_string(pos.y) + "," + to_string(pos.z);
-				jdata = "\"joint\":";
-				jdata = jdata + "\"" + name + "\",";
-				jdata = jdata + "\"x\":" + to_string(pos.x) + ",";
-				jdata = jdata + "\"y\":" + to_string(pos.y) + ",";
-				jdata = jdata + "\"z\":" + to_string(pos.z);
-				jdata = "{" + jdata + "}";  
-				// format= {"\joint\":\"jointName\",\"x\":0.1,\"y\":0.2,\"z\":0.3 }
-
-				if (bdata == "") {  // if bdata = "" no comma
-					bdata = jdata;
-				}
-				else {
-					bdata = bdata + "," + jdata;
-				}
-
-				
-
-			} // end inner joints loop
-			
-			// MORE body. values >>>
-			// body. tracked (bool)
-			// body. leftHandState (_Handstate) enum?
-			// body. rightHandState (_Handstate)
-			// body. activity  ??what is this
-
-			// need to escape all " in bdata
-			bdata = escape_quotes(bdata);
-			bdata = "[" + bdata + "]";
-			bdata = "{\"body_" + to_string(body.bodyId) + "\": \"" + bdata + "\"}";
-			//cout << bdata << endl;
-			ofxOscMessage m;
-			//string adrs = "/body/" + to_string(body.bodyId);
-			string adrs = "/kinectV2/body/" + to_string(body.bodyId);
-			m.setAddress(adrs);
-			m.addStringArg(bdata);
-			oscSender.sendMessage(m);
-
-		} // end body loop
-
-	}
-	//
-	//--
+	} // end if/else
 
 
 
