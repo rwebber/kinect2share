@@ -19,6 +19,8 @@ void ofApp::setup() {
 
 	oscSender.setup("localhost", 1234);
 
+	// TODO: add text input for ip address etc.. https://github.com/fx-lange/ofxInputField/
+
 	gui.setup("Parameters", "settings.xml");
 	gui.add(jsonGrouped.setup("as JSON", false));
 
@@ -64,12 +66,20 @@ void ofApp::update() {
 	//	JointType_ThumbRight = 24,
 	//	JointType_Count = (JointType_ThumbRight + 1)
 
+	//const char * jointNames[] = { "SpineBase", "SpineMid", "Neck", "Head",
+	//	"ShoulderLeft", "ElbowLeft", "WristLeft", "HandLeft",
+	//	"ShoulderRight", "ElbowRight", "WristRight", "HandRight",
+	//	"HipLeft", "KneeLeft", "AnkleLeft", "FootLeft",
+	//	"HipRight", "KneeRight", "AnkleRight", "FootRight",
+	//	"SpineShoulder", "HandTipLeft", "ThumbLeft", "HandTipRight", "ThumbRight", "Count" };
+
+	// shorten names to minimize packet size
 	const char * jointNames[] = { "SpineBase", "SpineMid", "Neck", "Head",
-		"ShoulderLeft", "ElbowLeft", "WristLeft", "HandLeft",
-		"ShoulderRight", "ElbowRight", "WristRight", "HandRight",
-		"HipLeft", "KneeLeft", "AnkleLeft", "FootLeft",
-		"HipRight", "KneeRight", "AnkleRight", "FootRight",
-		"SpineShoulder", "HandTipLeft", "ThumbLeft", "HandTipRight", "ThumbRight", "Count" };
+		"ShldrL", "ElbowL", "WristL", "HandL",
+		"ShldrR", "ElbowR", "WristR", "HandR",
+		"HipL", "KneeL", "AnkleL", "FootL",
+		"HipR", "KneeR", "AnkleR", "FootR",
+		"SpineShldr", "HandTipL", "ThumbL", "HandTipR", "ThumbR", "Count" };
 
 	// MORE joint. values >>>
 	// second. positionInWorld[] x y z , positionInDepthMap[] x y
@@ -86,17 +96,17 @@ void ofApp::update() {
 					// http://stackoverflow.com/questions/31121378/json-cpp-how-to-initialize-from-string-and-get-string-value
 					// http://uscilab.github.io/cereal/
 
+	auto bodies = kinect.getBodySource()->getBodies();
+
 	if (jsonGrouped) {
-			auto bodies = kinect.getBodySource()->getBodies();
 			for (auto body : bodies) {
 				string bdata = ""; // start JSON array build of body data
 				string jdata = ""; // start JSON array build of joints data
 				for (auto joint : body.joints) {
-
 					auto pos = joint.second.getPositionInWorld();
 					string name = jointNames[joint.first];
 					//jdata = "\"" + name + "\"," + to_string(pos.x) + "," + to_string(pos.y) + "," + to_string(pos.z);
-					jdata = "\"joint\":";
+					jdata = "\"j\":";
 					jdata = jdata + "\"" + name + "\",";
 					jdata = jdata + "\"x\":" + to_string(pos.x) + ",";
 					jdata = jdata + "\"y\":" + to_string(pos.y) + ",";
@@ -113,17 +123,21 @@ void ofApp::update() {
 				// need to escape all " in bdata
 				bdata = escape_quotes(bdata);
 				bdata = "[" + bdata + "]";
-				bdata = "{\"body_" + to_string(body.bodyId) + "\": \"" + bdata + "\"}";
+				bdata = "{\"b" + to_string(body.bodyId) + "\": \"" + bdata + "\"}";
 				//cout << bdata << endl;
 				ofxOscMessage m;
 				//string adrs = "/body/" + to_string(body.bodyId);
-				string adrs = "/kinectV2/body/" + to_string(body.bodyId);
+				string adrs = "/kV2/body/" + to_string(body.bodyId);
 				m.setAddress(adrs);
 				m.addStringArg(bdata);
 				oscSender.sendMessage(m);
+
+				//cout << bdata.length() << endl;  // TEST
+				//if (bdata.length() < 1000) {
+				//	cout << "data: " + bdata << endl;  // TEST
+				//}
 			} // end body loop
 	}else{
-			auto bodies = kinect.getBodySource()->getBodies();
 			for (auto body : bodies) {
 				for (auto joint : body.joints) {
 					auto pos = joint.second.getPositionInWorld();
@@ -151,21 +165,21 @@ void ofApp::update() {
 	//--
 	//
 
-	//{
-	//	// Note that for this we need a reference of which joints are connected to each other.
-	//	// We call this the 'boneAtlas', and you can ask for a reference to this atlas whenever you like
-	//	auto bodies = kinect.getBodySource()->getBodies();
-	//	auto boneAtlas = ofxKinectForWindows2::Data::Body::getBonesAtlas();
+	{
+		// Note that for this we need a reference of which joints are connected to each other.
+		// We call this the 'boneAtlas', and you can ask for a reference to this atlas whenever you like
+		auto bodies = kinect.getBodySource()->getBodies();
+		auto boneAtlas = ofxKinectForWindows2::Data::Body::getBonesAtlas();
 
-	//	for (auto body : bodies) {
-	//		for (auto bone : boneAtlas) {
-	//			auto firstJointInBone = body.joints[bone.first];
-	//			auto secondJointInBone = body.joints[bone.second];
+		for (auto body : bodies) {
+			for (auto bone : boneAtlas) {
+				auto firstJointInBone = body.joints[bone.first];
+				auto secondJointInBone = body.joints[bone.second];
 
-	//			//now do something with the joints
-	//		}
-	//	}
-	//}
+				//now do something with the joints
+			}
+		}
+	}
 
 	//
 	//--
