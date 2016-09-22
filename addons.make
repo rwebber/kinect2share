@@ -1,4 +1,5 @@
 ofxGui
-ofxKinectForWindows2
 ofxOsc
+ofxInputField
+ofxKinectForWindows2
 ofxSpout2

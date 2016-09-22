@@ -17,16 +17,28 @@ void ofApp::setup() {
 	fboDepth.allocate(previewWidth, previewHeight, GL_RGB); //setup offscreen buffer in openGL RGB mode
 	fboColor.allocate(1920, 1080, GL_RGB); //setup offscreen buffer in openGL RGB mode
 
-	oscSender.setup("localhost", 1234);
-
 	// TODO: add text input for ip address etc.. https://github.com/fx-lange/ofxInputField/
 
 	gui.setup("Parameters", "settings.xml");
-	gui.add(jsonGrouped.setup("as JSON", false));
+	gui.add(jsonGrouped.setup("as JSON", true));
+	gui.add(HostField.setup("Host", "localhost"));
 
 	gui.loadFromFile("settings.xml");
+	
+	// HostField.addListener(this, &ofApp::HostFieldChanged);
+
+	oscSender.disableBroadcast();
+	oscSender.setup(HostField, 1234);
 }
 
+
+//--------------------------------------------------------------
+void ofApp::HostFieldChanged() {
+	cout << "fieldChange" << endl;
+	oscSender.disableBroadcast();
+	oscSender.setup(HostField, 1234);
+	cout << "updated" << endl;
+}
 
 
 //--------------------------------------------------------------
@@ -273,6 +285,11 @@ void ofApp::keyPressed(int key) {
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key) {
+	// https://forum.openframeworks.cc/t/keypressed-and-getting-the-special-keys/5727
+	if (key == OF_KEY_RETURN) {
+		cout << "ENTER" << endl;
+		HostFieldChanged();
+	}
 
 }
 
@@ -298,7 +315,7 @@ void ofApp::mouseReleased(int x, int y, int button) {
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h) {
-
+	// textField = ofToString(w) + "x" + ofToString(h);
 }
 
 //--------------------------------------------------------------

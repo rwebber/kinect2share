@@ -99,14 +99,32 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);src;..\..\..\addons\ofxGui\src;..\..\..\addons\ofxKinectForWindows2\src;..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2;..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2\Data;..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2\Source;..\..\..\addons\ofxOsc\libs;..\..\..\addons\ofxOsc\libs\oscpack;..\..\..\addons\ofxOsc\libs\oscpack\src;..\..\..\addons\ofxOsc\libs\oscpack\src\ip;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\posix;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\win32;..\..\..\addons\ofxOsc\libs\oscpack\src\osc;..\..\..\addons\ofxOsc\src;..\..\..\addons\ofxSpout2\libs;..\..\..\addons\ofxSpout2\libs\include;..\..\..\addons\ofxSpout2\libs\src;..\..\..\addons\ofxSpout2\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);
+src;
+..\..\..\addons\ofxGui\src;
+..\..\..\addons\ofxKinectForWindows2\src;
+..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2;
+..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2\Data;
+..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2\Source;
+..\..\..\addons\ofxOsc\libs;
+..\..\..\addons\ofxOsc\libs\oscpack;
+..\..\..\addons\ofxOsc\libs\oscpack\src;
+..\..\..\addons\ofxOsc\libs\oscpack\src\ip;
+..\..\..\addons\ofxOsc\libs\oscpack\src\ip\posix;
+..\..\..\addons\ofxOsc\libs\oscpack\src\ip\win32;
+..\..\..\addons\ofxOsc\libs\oscpack\src\osc;
+..\..\..\addons\ofxOsc\src;
+..\..\..\addons\ofxSpout2\libs;
+..\..\..\addons\ofxSpout2\libs\include;
+..\..\..\addons\ofxSpout2\libs\src;
+..\..\..\addons\ofxSpout2\src;
+C:\OF\of_v0.9.3_vs_release\addons\ofxInputField\src</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent />
@@ -118,7 +136,26 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);src;..\..\..\addons\ofxGui\src;..\..\..\addons\ofxKinectForWindows2\src;..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2;..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2\Data;..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2\Source;..\..\..\addons\ofxOsc\libs;..\..\..\addons\ofxOsc\libs\oscpack;..\..\..\addons\ofxOsc\libs\oscpack\src;..\..\..\addons\ofxOsc\libs\oscpack\src\ip;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\posix;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\win32;..\..\..\addons\ofxOsc\libs\oscpack\src\osc;..\..\..\addons\ofxOsc\src;..\..\..\addons\ofxSpout2\libs;..\..\..\addons\ofxSpout2\libs\include;..\..\..\addons\ofxSpout2\libs\src;..\..\..\addons\ofxSpout2\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);
+src;
+..\..\..\addons\ofxGui\src;
+..\..\..\addons\ofxKinectForWindows2\src;
+..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2;
+..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2\Data;
+..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2\Source;
+..\..\..\addons\ofxOsc\libs;
+..\..\..\addons\ofxOsc\libs\oscpack;
+..\..\..\addons\ofxOsc\libs\oscpack\src;
+..\..\..\addons\ofxOsc\libs\oscpack\src\ip;
+..\..\..\addons\ofxOsc\libs\oscpack\src\ip\posix;
+..\..\..\addons\ofxOsc\libs\oscpack\src\ip\win32;
+..\..\..\addons\ofxOsc\libs\oscpack\src\osc;
+..\..\..\addons\ofxOsc\src;
+..\..\..\addons\ofxSpout2\libs;
+..\..\..\addons\ofxSpout2\libs\include;
+..\..\..\addons\ofxSpout2\libs\src;
+..\..\..\addons\ofxSpout2\src;
+C:\OF\of_v0.9.3_vs_release\addons\ofxInputField\src</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -126,7 +163,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent />
@@ -137,7 +173,26 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);src;..\..\..\addons\ofxGui\src;..\..\..\addons\ofxKinectForWindows2\src;..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2;..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2\Data;..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2\Source;..\..\..\addons\ofxOsc\libs;..\..\..\addons\ofxOsc\libs\oscpack;..\..\..\addons\ofxOsc\libs\oscpack\src;..\..\..\addons\ofxOsc\libs\oscpack\src\ip;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\posix;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\win32;..\..\..\addons\ofxOsc\libs\oscpack\src\osc;..\..\..\addons\ofxOsc\src;..\..\..\addons\ofxSpout2\libs;..\..\..\addons\ofxSpout2\libs\include;..\..\..\addons\ofxSpout2\libs\src;..\..\..\addons\ofxSpout2\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);
+src;
+..\..\..\addons\ofxGui\src;
+..\..\..\addons\ofxKinectForWindows2\src;
+..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2;
+..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2\Data;
+..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2\Source;
+..\..\..\addons\ofxOsc\libs;
+..\..\..\addons\ofxOsc\libs\oscpack;
+..\..\..\addons\ofxOsc\libs\oscpack\src;
+..\..\..\addons\ofxOsc\libs\oscpack\src\ip;
+..\..\..\addons\ofxOsc\libs\oscpack\src\ip\posix;
+..\..\..\addons\ofxOsc\libs\oscpack\src\ip\win32;
+..\..\..\addons\ofxOsc\libs\oscpack\src\osc;
+..\..\..\addons\ofxOsc\src;
+..\..\..\addons\ofxSpout2\libs;
+..\..\..\addons\ofxSpout2\libs\include;
+..\..\..\addons\ofxSpout2\libs\src;
+..\..\..\addons\ofxSpout2\src;
+C:\OF\of_v0.9.3_vs_release\addons\ofxInputField\src</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -148,7 +203,6 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent />
@@ -159,7 +213,26 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);src;..\..\..\addons\ofxGui\src;..\..\..\addons\ofxKinectForWindows2\src;..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2;..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2\Data;..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2\Source;..\..\..\addons\ofxOsc\libs;..\..\..\addons\ofxOsc\libs\oscpack;..\..\..\addons\ofxOsc\libs\oscpack\src;..\..\..\addons\ofxOsc\libs\oscpack\src\ip;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\posix;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\win32;..\..\..\addons\ofxOsc\libs\oscpack\src\osc;..\..\..\addons\ofxOsc\src;..\..\..\addons\ofxSpout2\libs;..\..\..\addons\ofxSpout2\libs\include;..\..\..\addons\ofxSpout2\libs\src;..\..\..\addons\ofxSpout2\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);
+src;
+..\..\..\addons\ofxGui\src;
+..\..\..\addons\ofxKinectForWindows2\src;
+..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2;
+..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2\Data;
+..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2\Source;
+..\..\..\addons\ofxOsc\libs;
+..\..\..\addons\ofxOsc\libs\oscpack;
+..\..\..\addons\ofxOsc\libs\oscpack\src;
+..\..\..\addons\ofxOsc\libs\oscpack\src\ip;
+..\..\..\addons\ofxOsc\libs\oscpack\src\ip\posix;
+..\..\..\addons\ofxOsc\libs\oscpack\src\ip\win32;
+..\..\..\addons\ofxOsc\libs\oscpack\src\osc;
+..\..\..\addons\ofxOsc\src;
+..\..\..\addons\ofxSpout2\libs;
+..\..\..\addons\ofxSpout2\libs\include;
+..\..\..\addons\ofxSpout2\libs\src;
+..\..\..\addons\ofxSpout2\src;
+C:\OF\of_v0.9.3_vs_release\addons\ofxInputField\src</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
@@ -169,12 +242,12 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\addons\ofxInputField\src\ofxInputField.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
     <ClCompile Include="..\..\..\addons\ofxGui\src\ofxBaseGui.cpp" />
@@ -220,6 +293,7 @@
     <ClCompile Include="..\..\..\addons\ofxSpout2\libs\src\SpoutSharedMemory.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\addons\ofxInputField\src\ofxInputField.h" />
     <ClInclude Include="src\ofApp.h" />
     <ClInclude Include="..\..\..\addons\ofxGui\src\ofxBaseGui.h" />
     <ClInclude Include="..\..\..\addons\ofxGui\src\ofxButton.h" />

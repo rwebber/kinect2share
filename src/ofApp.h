@@ -4,6 +4,7 @@
 #include "ofxKinectForWindows2.h"
 #include "ofxOsc.h"
 #include "ofxGui.h"
+#include "ofxInputField.h"
 #include "ofxSpout2.h"
 
 class ofApp : public ofBaseApp {
@@ -25,6 +26,8 @@ public:
 	void gotMessage(ofMessage msg);
 
 	string escape_quotes(const string & before);
+	// void HostFieldChanged(string & HostField);
+	void HostFieldChanged();
 
 	// offscreen buffers (frame buffer object)
 	ofFbo fboDepth; // draw to for spout
@@ -39,4 +42,10 @@ public:
 	// GUI
 	ofxPanel gui;
 	ofxToggle jsonGrouped;
+
+	// ofxInputField
+	ofxFloatField radius;
+	ofxIntField circleResolution;
+	ofxTextField HostField;
+
 };
