@@ -10,11 +10,11 @@
 class ofApp : public ofBaseApp {
 
 public:
-	ofxKFW2::Device kinect;
 	void setup();
 	void update();
 	void draw();
 	void exit(); // added
+
 	void keyPressed(int key);
 	void keyReleased(int key);
 	void mouseMoved(int x, int y);
@@ -25,9 +25,16 @@ public:
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
 
+	ofxKFW2::Device kinect;
+	ICoordinateMapper* coordinateMapper;
+
 	string escape_quotes(const string & before);
 	// void HostFieldChanged(string & HostField);
 	void HostFieldChanged();
+
+	// BG
+	ofImage bgCB; // background checkerboard
+	ofPlanePrimitive bgPlane;
 
 	// offscreen buffers (frame buffer object)
 	ofFbo fboDepth; // draw to for spout
@@ -49,5 +56,11 @@ public:
 	ofxFloatField radius;
 	ofxIntField circleResolution;
 	ofxTextField HostField;
+
+	// added for coordmapping
+	ofImage bodyIndexImg, foregroundImg;
+	vector<ofVec2f> colorCoords;
+	int numBodiesTracked;
+	bool bHaveAllStreams;
 
 };
