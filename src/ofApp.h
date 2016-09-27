@@ -42,6 +42,8 @@ public:
 	// GUI
 	ofxPanel gui;
 	ofxToggle jsonGrouped;
+	ofxToggle spoutCutOut;
+	ofxToggle spoutColor;
 
 	// ofxInputField
 	ofxFloatField radius;

@@ -20,8 +20,10 @@ void ofApp::setup() {
 	// TODO: add text input for ip address etc.. https://github.com/fx-lange/ofxInputField/
 
 	gui.setup("Parameters", "settings.xml");
-	gui.add(jsonGrouped.setup("as JSON", true));
-	gui.add(HostField.setup("Host", "localhost"));
+	gui.add(jsonGrouped.setup("OSC as JSON", true));
+	gui.add(HostField.setup("OSC host ip", "localhost"));
+	gui.add(spoutCutOut.setup("B&W cutouts -> spout", true));
+	gui.add(spoutColor.setup("Color -> spout", true));
 
 	gui.loadFromFile("settings.xml");
 	
@@ -230,7 +232,9 @@ void ofApp::draw() {
 		kinect.getColorSource()->draw(0, 0, 1920, 1080);
 	fboColor.end();
 	//Spout
-	spout.sendTexture(fboColor.getTextureReference(), "kv2_color");
+	if (spoutColor) {
+		spout.sendTexture(fboColor.getTextureReference(), "kv2_color");
+	}
 	//Draw from FBO
 	fboColor.draw(previewWidth, 0 + colorTop, previewWidth, colorHeight);
 	//kinect.getColorSource()->draw(previewWidth, 0 + colorTop, previewWidth, colorHeight);
@@ -250,7 +254,9 @@ void ofApp::draw() {
 		kinect.getBodyIndexSource()->draw(0, 0, previewWidth, previewHeight);
 	fboDepth.end();
 	//Spout
-	spout.sendTexture(fboDepth.getTextureReference(), "kv2_cutout");
+	if (spoutCutOut) {
+		spout.sendTexture(fboDepth.getTextureReference(), "kv2_cutout");
+	}
 	//Draw from FBO
 	fboDepth.draw(previewWidth, previewHeight, previewWidth, previewHeight);
 	//fboDepth.clear();
