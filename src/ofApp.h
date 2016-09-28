@@ -34,11 +34,10 @@ public:
 
 	// BG
 	ofImage bgCB; // background checkerboard
-	ofPlanePrimitive bgPlane;
 
 	// offscreen buffers (frame buffer object)
-	ofFbo fboDepth; // draw to for spout
-	ofFbo fboColor; // draw to for spout
+	ofFbo fboDepth; // draw to for spout, setup at Kinect native 512x
+	ofFbo fboColor; // draw to for spout, setup at 1080x
 
 	// Spout obj
 	ofxSpout2 spout;
@@ -51,10 +50,10 @@ public:
 	ofxToggle jsonGrouped;
 	ofxToggle spoutCutOut;
 	ofxToggle spoutColor;
+	ofxToggle spoutKeyed;
 
 	// ofxInputField
-	ofxFloatField radius;
-	ofxIntField circleResolution;
+	ofxIntField oscPort;
 	ofxTextField HostField;
 
 	// added for coordmapping
@@ -62,5 +61,4 @@ public:
 	vector<ofVec2f> colorCoords;
 	int numBodiesTracked;
 	bool bHaveAllStreams;
-
 };
