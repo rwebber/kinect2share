@@ -97,41 +97,43 @@ void ofApp::update() {
 	coordinateMapper->MapDepthFrameToColorSpace(DEPTH_SIZE, (UINT16*)depthPix.getPixels(), DEPTH_SIZE, (ColorSpacePoint*)colorCoords.data());
 
 	// Loop through the depth image
-	for (int y = 0; y < DEPTH_HEIGHT; y++) {
-		for (int x = 0; x < DEPTH_WIDTH; x++) {
-			int index = (y * DEPTH_WIDTH) + x;
+	if (spoutKeyed) {
+		for (int y = 0; y < DEPTH_HEIGHT; y++) {
+			for (int x = 0; x < DEPTH_WIDTH; x++) {
+				int index = (y * DEPTH_WIDTH) + x;
 
-			ofColor trans(0,0,0,0);
-			foregroundImg.setColor(x, y, trans);
+				ofColor trans(0, 0, 0, 0);
+				foregroundImg.setColor(x, y, trans);
 
-			// This is the check to see if a given pixel is inside a tracked  body or part of the background.
-			// If it's part of a body, the value will be that body's id (0-5), or will > 5 if it's
-			// part of the background
-			// More info here: https://msdn.microsoft.com/en-us/library/windowspreview.kinect.bodyindexframe.aspx
-			float val = bodyIndexPix[index];
-			if (val >= bodies.size()) {
-				continue; // exit for loop without executing the following code
+				// This is the check to see if a given pixel is inside a tracked  body or part of the background.
+				// If it's part of a body, the value will be that body's id (0-5), or will > 5 if it's
+				// part of the background
+				// More info here: https://msdn.microsoft.com/en-us/library/windowspreview.kinect.bodyindexframe.aspx
+				float val = bodyIndexPix[index];
+				if (val >= bodies.size()) {
+					continue; // exit for loop without executing the following code
+				}
+
+				// For a given (x,y) in the depth image, lets look up where that point would be
+				// in the color image
+				ofVec2f mappedCoord = colorCoords[index];
+
+				// Mapped x/y coordinates in the color can come out as floats since it's not a 1:1 mapping
+				// between depth <-> color spaces i.e. a pixel at (100, 100) in the depth image could map
+				// to (405.84637, 238.13828) in color space
+				// So round the x/y values down to ints so that we can look up the nearest pixel
+				mappedCoord.x = floor(mappedCoord.x);
+				mappedCoord.y = floor(mappedCoord.y);
+
+				// Make sure it's within some sane bounds, and skip it otherwise
+				if (mappedCoord.x < 0 || mappedCoord.y < 0 || mappedCoord.x >= COLOR_WIDTH || mappedCoord.y >= COLOR_HEIGHT) {
+					continue;
+				}
+
+				// Finally, pull the color from the color image based on its coords in
+				// the depth image
+				foregroundImg.setColor(x, y, colorPix.getColor(mappedCoord.x, mappedCoord.y));
 			}
-
-			// For a given (x,y) in the depth image, lets look up where that point would be
-			// in the color image
-			ofVec2f mappedCoord = colorCoords[index];
-
-			// Mapped x/y coordinates in the color can come out as floats since it's not a 1:1 mapping
-			// between depth <-> color spaces i.e. a pixel at (100, 100) in the depth image could map
-			// to (405.84637, 238.13828) in color space
-			// So round the x/y values down to ints so that we can look up the nearest pixel
-			mappedCoord.x = floor(mappedCoord.x);
-			mappedCoord.y = floor(mappedCoord.y);
-
-			// Make sure it's within some sane bounds, and skip it otherwise
-			if (mappedCoord.x < 0 || mappedCoord.y < 0 || mappedCoord.x >= COLOR_WIDTH || mappedCoord.y >= COLOR_HEIGHT) {
-				continue;
-			}
-
-			// Finally, pull the color from the color image based on its coords in
-			// the depth image
-			foregroundImg.setColor(x, y, colorPix.getColor(mappedCoord.x, mappedCoord.y));
 		}
 	}
 
@@ -277,8 +279,6 @@ void ofApp::update() {
 	//--
 }
 
-
-
 string ofApp::escape_quotes(const string &before)
 // sourced from: http://stackoverflow.com/questions/1162619/fastest-quote-escaping-implementation
 {
@@ -300,6 +300,9 @@ string ofApp::escape_quotes(const string &before)
 
 //--------------------------------------------------------------
 void ofApp::draw() {
+	stringstream ss;
+
+	ofClear(0, 0, 0);
 	bgCB.draw(0, 0, ofGetWidth(), ofGetHeight());
 
 	// Color is at 1920x1080 instead of 512x424 so we should fix aspect ratio
@@ -319,7 +322,6 @@ void ofApp::draw() {
 		fboColor.begin(); // start drawing to off screenbuffer
 			ofClear(255, 255, 255, 0);
 			kinect.getColorSource()->draw(0, 0, COLOR_WIDTH, COLOR_HEIGHT);
-			//kinect.getColorSource()->draw(previewWidth, 0 + colorTop, previewWidth, colorHeight);
 		fboColor.end();
 		//Spout
 		if (spoutColor) {
@@ -356,7 +358,7 @@ void ofApp::draw() {
 	
 	{
 		
-		// greenscreen fx from coordmaping
+		// greenscreen/keyed fx from coordmaping
 		//fboDepth.clear();
 		//ofClear(255, 255, 255, 0);
 		fboDepth.begin(); // start drawing to off screenbuffer
@@ -366,24 +368,52 @@ void ofApp::draw() {
 		//Spout
 		if (spoutKeyed) {
 			spout.sendTexture(fboDepth.getTextureReference(), "kv2_keyed");
+			//Draw from FBO, removed if not checked
+			ofEnableBlendMode(OF_BLENDMODE_ALPHA);
+			fboDepth.draw(previewWidth * 2, 0, previewWidth, previewHeight);
+		} else {
+			ss.str("");
+			ss << "Keyed image only show when" <<  endl;
+			ss << "in Parameters pallette." << endl;
+			ofDrawBitmapStringHighlight(ss.str(), previewWidth * 2 + 20, previewHeight - (previewHeight /2));
 		}
-		//Draw from FBO
-		ofEnableBlendMode(OF_BLENDMODE_ALPHA);
-		fboDepth.draw(previewWidth * 2, 0, previewWidth, previewHeight);
+
 	}
-
-
-	stringstream ss;
-	ss << "fps : " << ofGetFrameRate() << endl;
-	ss << "Tracked bodies: " << numBodiesTracked;
-	if (!bHaveAllStreams) ss << endl << "Not all streams detected!";
-	ofDrawBitmapStringHighlight(ss.str(), 20, previewHeight * 2 - 20);
-
 
 	{
 		// Draw bodies joints+bones over
-		kinect.getBodySource()->drawProjected(previewWidth, previewHeight, previewWidth, previewHeight, ofxKFW2::ProjectionCoordinates::DepthCamera);
+		kinect.getBodySource()->drawProjected(previewWidth * 2, previewHeight, previewWidth, previewHeight, ofxKFW2::ProjectionCoordinates::DepthCamera);
 	}
+
+	ss.str("");
+	ss << "fps : " << ofGetFrameRate();
+	if (!bHaveAllStreams) ss << endl << "Not all streams detected!";
+	ofDrawBitmapStringHighlight(ss.str(), 20, previewHeight * 2 - 20);
+
+	ss.str("");
+	ss << "Keyed FX : cpu heavy";
+	ofDrawBitmapStringHighlight(ss.str(), previewWidth * 2 + 20, 20);
+
+	ss.str("");
+	ss << "Color : HD 1920x1080";
+	ofDrawBitmapStringHighlight(ss.str(), previewWidth + 20, 20);
+
+	ss.str("");
+	ss << "BnW : body outlines";
+	ofDrawBitmapStringHighlight(ss.str(), previewWidth + 20, previewHeight + 20);
+
+	ss.str("");
+	ss << "Bodies : coordinates -> OSC" << endl;
+	ss << "Tracked bodies: " << numBodiesTracked;
+	ofDrawBitmapStringHighlight(ss.str(), previewWidth * 2 + 20, previewHeight + 20);
+
+	ss.str("");
+	ss << "Depthmap : ";
+	ofDrawBitmapStringHighlight(ss.str(), 20, 20);
+
+	ss.str("");
+	ss << "Infrared : ";
+	ofDrawBitmapStringHighlight(ss.str(), 20, previewHeight + 20);
 
 	gui.draw();
 }
