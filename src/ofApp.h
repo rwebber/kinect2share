@@ -47,14 +47,19 @@ public:
 
 	// GUI
 	ofxPanel gui;
+
+	ofxGuiGroup OSCgroup;
 	ofxToggle jsonGrouped;
+	// ofxInputField
+	ofxIntField oscPort;
+	ofxTextField HostField;
+
+	ofxGuiGroup SPOUTgroup;
 	ofxToggle spoutCutOut;
 	ofxToggle spoutColor;
 	ofxToggle spoutKeyed;
 
-	// ofxInputField
-	ofxIntField oscPort;
-	ofxTextField HostField;
+
 
 	// added for coordmapping
 	ofImage bodyIndexImg, foregroundImg;

@@ -12,6 +12,10 @@ int previewHeight = DEPTH_HEIGHT / 2;
 
 //--------------------------------------------------------------
 void ofApp::setup() {
+	ofSetWindowTitle("kinect2share");
+	ofSetFrameRate(30);
+	ofSetVerticalSync(true);
+
 	kinect.open();
 	kinect.initDepthSource();
 	kinect.initColorSource();
@@ -38,12 +42,23 @@ void ofApp::setup() {
 	fboColor.allocate(COLOR_WIDTH, COLOR_HEIGHT, GL_RGB); //setup offscreen buffer in openGL RGB mode
 
 	gui.setup("Parameters", "settings.xml");
-	gui.add(jsonGrouped.setup("OSC as JSON", true));
-	gui.add(HostField.setup("OSC host ip", "localhost"));
-	gui.add(oscPort.setup("OSC port", 1234));
-	gui.add(spoutCutOut.setup("BnW cutouts -> spout", true));
-	gui.add(spoutColor.setup("Color -> spout", true));
-	gui.add(spoutKeyed.setup("Keyed -> spout", true));
+	//ofColor paramBG(0, 255, 0);
+	gui.setHeaderBackgroundColor(ofColor::darkRed);
+	gui.setBorderColor(ofColor::darkRed);
+	//gui.setBackgroundColor(ofColor::darkRed);
+	//gui.setFillColor(ofColor::darkRed);
+
+	OSCgroup.setup("OSC");
+	OSCgroup.add(jsonGrouped.setup("OSC as JSON", true));
+	OSCgroup.add(HostField.setup("OSC host ip", "localhost"));
+	OSCgroup.add(oscPort.setup("OSC port", 1234));
+	gui.add(&OSCgroup);
+	
+	SPOUTgroup.setup("Spout");
+	SPOUTgroup.add(spoutCutOut.setup("BnW cutouts -> spout", true));
+	SPOUTgroup.add(spoutColor.setup("Color -> spout", true));
+	SPOUTgroup.add(spoutKeyed.setup("Keyed -> spout", true));
+	gui.add(&SPOUTgroup);
 
 	gui.loadFromFile("settings.xml");
 	
@@ -367,11 +382,13 @@ void ofApp::draw() {
 		fboDepth.end();
 		//Spout
 		if (spoutKeyed) {
+			//ofSetFrameRate(30);
 			spout.sendTexture(fboDepth.getTextureReference(), "kv2_keyed");
 			//Draw from FBO, removed if not checked
 			ofEnableBlendMode(OF_BLENDMODE_ALPHA);
 			fboDepth.draw(previewWidth * 2, 0, previewWidth, previewHeight);
 		} else {
+			//ofSetFrameRate(60);
 			ss.str("");
 			ss << "Keyed image only show when" <<  endl;
 			ss << "in Parameters pallette." << endl;
