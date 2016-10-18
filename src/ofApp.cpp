@@ -390,9 +390,10 @@ void ofApp::draw() {
 		} else {
 			//ofSetFrameRate(60);
 			ss.str("");
-			ss << "Keyed image only show when" <<  endl;
-			ss << "in Parameters pallette." << endl;
-			ofDrawBitmapStringHighlight(ss.str(), previewWidth * 2 + 20, previewHeight - (previewHeight /2));
+			ss << "Keyed image only shown when" <<  endl;
+			ss << "checked in Parameters window" << endl;
+			ss << "and, a body is being tracked.";
+			ofDrawBitmapStringHighlight(ss.str(), previewWidth * 2 + 20, previewHeight - (previewHeight /2 + 60));
 		}
 
 	}
