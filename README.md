@@ -36,7 +36,7 @@ MIT License http://en.wikipedia.org/wiki/MIT_License
 
 ## Notes
 1. The release version should be a fully self contained application. (let me know if this is not the case)
-2. To work with the code, you'll need the Kinect v2 SDK installed as outlined in the readme for  [ofxKinectForWindows2](https://github.com/elliotwoods/ofxKinectForWindows2).
+2. To work with the code, you'll need the Kinect v2 SDK. https://www.microsoft.com/en-us/download/details.aspx?id=44561
 
 Additional ofx addons are used:
 - ofxGui (create parameters gui) *core addon

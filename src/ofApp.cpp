@@ -38,7 +38,8 @@ void ofApp::setup() {
 	//ofDisableArbTex();
 	bgCB.load("images/checkerbg.png");
 
-	fboDepth.allocate(DEPTH_WIDTH, DEPTH_HEIGHT, GL_RGBA); //setup offscreen buffer in openGL RGBA mode
+	// TODO: depth and IR to be added -> fboDepth
+	fboDepth.allocate(DEPTH_WIDTH, DEPTH_HEIGHT, GL_RGBA); //setup offscreen buffer in openGL RGBA mode (used for Keyed and B+W bodies.)
 	fboColor.allocate(COLOR_WIDTH, COLOR_HEIGHT, GL_RGB); //setup offscreen buffer in openGL RGB mode
 
 	gui.setup("Parameters", "settings.xml");
@@ -219,24 +220,48 @@ void ofApp::update() {
 	if (jsonGrouped) {
 			for (auto body : bodies) {
 				string bdata = ""; // start JSON array build of body data
-				string jdata = ""; // start JSON array build of joints data
+				string newData = ""; // start JSON array build of joints data
 				for (auto joint : body.joints) {
 					auto pos = joint.second.getPositionInWorld();
 					string name = jointNames[joint.first];
-					jdata = "\"j\":";
-					jdata = jdata + "\"" + name + "\",";
-					jdata = jdata + "\"x\":" + to_string(pos.x) + ",";
-					jdata = jdata + "\"y\":" + to_string(pos.y) + ",";
-					jdata = jdata + "\"z\":" + to_string(pos.z);
-					jdata = "{" + jdata + "}";
+					newData = "\"j\":";  // j for joint ;)
+					newData = newData + "\"" + name + "\",";
+					newData = newData + "\"x\":" + to_string(pos.x) + ",";
+					newData = newData + "\"y\":" + to_string(pos.y) + ",";
+					newData = newData + "\"z\":" + to_string(pos.z);
+					newData = "{" + newData + "}";
 					// format= {"\joint\":\"jointName\",\"x\":0.1,\"y\":0.2,\"z\":0.3 }
 					if (bdata == "") {  // if bdata = "" no comma
-						bdata = jdata;
+						bdata = newData;
 					}
 					else {
-						bdata = bdata + "," + jdata;
+						bdata = bdata + "," + newData;
 					}
 				} // end inner joints loop
+
+				// format= {"\joint\":\"jointName\",\"x\":0.1,\"y\":0.2,\"z\":0.3 }
+				// {"j":"SpineBase","x":-0.102359,"y":-0.669035,"z":1.112273}
+				// add additional Body info (like hands)
+
+				// TODO: add below features to non Json OSC
+				// body.activity ?? contains more.. worth looking into 
+				newData = "\"LH-state\":" + to_string(body.leftHandState);
+				newData = "{" + newData + "}";
+				bdata = newData + "," + bdata;
+
+				newData = "\"RH-state\":" + to_string(body.rightHandState);
+				newData = "{" + newData + "}";
+				bdata = newData + "," + bdata;
+
+				newData = "\"trackingID\":" + to_string(body.trackingId);
+				newData = "{" + newData + "}";
+				bdata = newData + "," + bdata;
+
+				newData = "\"tracked\":" + to_string(body.tracked);
+				newData = "{" + newData + "}";
+				bdata = newData + "," + bdata;
+
+
 				// need to escape all " in bdata
 				bdata = escape_quotes(bdata);
 				bdata = "[" + bdata + "]";
@@ -250,6 +275,7 @@ void ofApp::update() {
 				oscSender.sendMessage(m);
 			} // end body loop
 	}else{
+		// NON JSON osc messages
 			for (auto body : bodies) {
 				for (auto joint : body.joints) {
 					auto pos = joint.second.getPositionInWorld();
