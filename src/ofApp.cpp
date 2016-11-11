@@ -247,7 +247,14 @@ void ofApp::update() {
 				// body.activity ?? contains more.. worth looking into 
 				newData = "\"LH-state\":" + to_string(body.leftHandState);
 				newData = "{" + newData + "}";
-				bdata = newData + "," + bdata;
+				// if tracked add ',' and bdata, otherwise bdata = newData. Fixes trailing ',' for non tracked bodies
+				if (!body.tracked) {
+					bdata = newData;
+				}
+				else {
+					bdata = newData + "," + bdata;
+				}
+				
 
 				newData = "\"RH-state\":" + to_string(body.rightHandState);
 				newData = "{" + newData + "}";
