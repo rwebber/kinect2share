@@ -29,6 +29,8 @@ public:
 	ICoordinateMapper* coordinateMapper;
 
 	string escape_quotes(const string & before);
+	void body2JSON(vector<ofxKinectForWindows2::Data::Body> bodies, const char * jointNames[]);
+
 	// void HostFieldChanged(string & HostField);
 	void HostFieldChanged();
 

@@ -79,6 +79,90 @@ void ofApp::HostFieldChanged() {
 }
 
 
+string ofApp::escape_quotes(const string &before)
+// sourced from: http://stackoverflow.com/questions/1162619/fastest-quote-escaping-implementation
+{
+	string after;
+	after.reserve(before.length() + 4);  // TODO: may need to increase reserve...
+
+	for (string::size_type i = 0; i < before.length(); ++i) {
+		switch (before[i]) {
+		case '"':
+		case '\\':
+			after += '\\';
+			// Fall through.
+		default:
+			after += before[i];
+		}
+	}
+	return after;
+}
+
+
+void ofApp::body2JSON(vector<ofxKinectForWindows2::Data::Body> bodies, const char * jointNames[]) {
+	// TODO: create factory
+	for (auto body : bodies) {
+		string bdata = ""; // start JSON array build of body data
+		string newData = ""; // start JSON array build of joints data
+		for (auto joint : body.joints) {
+			auto pos = joint.second.getPositionInWorld();
+			string name = jointNames[joint.first];
+			newData = "\"j\":";  // j for joint ;)
+			newData = newData + "\"" + name + "\",";
+			newData = newData + "\"x\":" + to_string(pos.x) + ",";
+			newData = newData + "\"y\":" + to_string(pos.y) + ",";
+			newData = newData + "\"z\":" + to_string(pos.z);
+			newData = "{" + newData + "}";
+			// format= {"\joint\":\"jointName\",\"x\":0.1,\"y\":0.2,\"z\":0.3 }
+			if (bdata == "") {  // if bdata = "" no comma
+				bdata = newData;
+			}
+			else {
+				bdata = bdata + "," + newData;
+			}
+		} // end inner joints loop
+
+		  // format= {"\joint\":\"jointName\",\"x\":0.1,\"y\":0.2,\"z\":0.3 }
+		  // {"j":"SpineBase","x":-0.102359,"y":-0.669035,"z":1.112273}
+
+		  // TODO: add below features to non Json OSC
+		  // body.activity ?? contains more.. worth looking into 
+		newData = "\"LH-state\":" + to_string(body.leftHandState);
+		newData = "{" + newData + "}";
+		// if tracked add ',' and bdata, otherwise bdata = newData. Fixes trailing ',' for non tracked bodies
+		if (!body.tracked) {
+			bdata = newData;
+		}
+		else {
+			bdata = newData + "," + bdata;
+		}
+
+		newData = "\"RH-state\":" + to_string(body.rightHandState);
+		newData = "{" + newData + "}";
+		bdata = newData + "," + bdata;
+
+		newData = "\"trackingID\":" + to_string(body.trackingId);
+		newData = "{" + newData + "}";
+		bdata = newData + "," + bdata;
+
+		newData = "\"tracked\":" + to_string(body.tracked);
+		newData = "{" + newData + "}";
+		bdata = newData + "," + bdata;
+
+		// need to escape all " in bdata
+		bdata = escape_quotes(bdata);
+		bdata = "[" + bdata + "]";
+		bdata = "{\"b" + to_string(body.bodyId) + "\": \"" + bdata + "\"}";
+		//cout << bdata << endl;
+		ofxOscMessage m;
+		string adrs = "/kV2/body/" + to_string(body.bodyId);
+		m.setAddress(adrs);
+		m.addStringArg(bdata);
+		oscSender.sendMessage(m);
+	} // end body loop
+}
+
+
 //--------------------------------------------------------------
 void ofApp::update() {
 	kinect.update();
@@ -218,70 +302,9 @@ void ofApp::update() {
 
 
 	if (jsonGrouped) {
-			for (auto body : bodies) {
-				string bdata = ""; // start JSON array build of body data
-				string newData = ""; // start JSON array build of joints data
-				for (auto joint : body.joints) {
-					auto pos = joint.second.getPositionInWorld();
-					string name = jointNames[joint.first];
-					newData = "\"j\":";  // j for joint ;)
-					newData = newData + "\"" + name + "\",";
-					newData = newData + "\"x\":" + to_string(pos.x) + ",";
-					newData = newData + "\"y\":" + to_string(pos.y) + ",";
-					newData = newData + "\"z\":" + to_string(pos.z);
-					newData = "{" + newData + "}";
-					// format= {"\joint\":\"jointName\",\"x\":0.1,\"y\":0.2,\"z\":0.3 }
-					if (bdata == "") {  // if bdata = "" no comma
-						bdata = newData;
-					}
-					else {
-						bdata = bdata + "," + newData;
-					}
-				} // end inner joints loop
-
-				// format= {"\joint\":\"jointName\",\"x\":0.1,\"y\":0.2,\"z\":0.3 }
-				// {"j":"SpineBase","x":-0.102359,"y":-0.669035,"z":1.112273}
-				// add additional Body info (like hands)
-
-				// TODO: add below features to non Json OSC
-				// body.activity ?? contains more.. worth looking into 
-				newData = "\"LH-state\":" + to_string(body.leftHandState);
-				newData = "{" + newData + "}";
-				// if tracked add ',' and bdata, otherwise bdata = newData. Fixes trailing ',' for non tracked bodies
-				if (!body.tracked) {
-					bdata = newData;
-				}
-				else {
-					bdata = newData + "," + bdata;
-				}
-				
-
-				newData = "\"RH-state\":" + to_string(body.rightHandState);
-				newData = "{" + newData + "}";
-				bdata = newData + "," + bdata;
-
-				newData = "\"trackingID\":" + to_string(body.trackingId);
-				newData = "{" + newData + "}";
-				bdata = newData + "," + bdata;
-
-				newData = "\"tracked\":" + to_string(body.tracked);
-				newData = "{" + newData + "}";
-				bdata = newData + "," + bdata;
-
-
-				// need to escape all " in bdata
-				bdata = escape_quotes(bdata);
-				bdata = "[" + bdata + "]";
-				bdata = "{\"b" + to_string(body.bodyId) + "\": \"" + bdata + "\"}";
-				//cout << bdata << endl;
-				ofxOscMessage m;
-				//string adrs = "/body/" + to_string(body.bodyId);
-				string adrs = "/kV2/body/" + to_string(body.bodyId);
-				m.setAddress(adrs);
-				m.addStringArg(bdata);
-				oscSender.sendMessage(m);
-			} // end body loop
+		body2JSON(bodies, jointNames);
 	}else{
+		// TODO:: seperate function and add additional features like hand open/closed
 		// NON JSON osc messages
 			for (auto body : bodies) {
 				for (auto joint : body.joints) {
@@ -327,24 +350,7 @@ void ofApp::update() {
 	//--
 }
 
-string ofApp::escape_quotes(const string &before)
-// sourced from: http://stackoverflow.com/questions/1162619/fastest-quote-escaping-implementation
-{
-	string after;
-	after.reserve(before.length() + 4);  // TODO: may need to increase reserve...
 
-	for (string::size_type i = 0; i < before.length(); ++i) {
-		switch (before[i]) {
-		case '"':
-		case '\\':
-			after += '\\';
-			// Fall through.
-		default:
-			after += before[i];
-		}
-	}
-	return after;
-}
 
 //--------------------------------------------------------------
 void ofApp::draw() {
@@ -364,7 +370,6 @@ void ofApp::draw() {
 		kinect.getDepthSource()->draw(0, 0, DEPTH_WIDTH, DEPTH_HEIGHT);  // note that the depth texture is RAW so may appear dark
 	}
 
-
 	{
 		// Draw Color Source
 		fboColor.begin(); // start drawing to off screenbuffer
@@ -380,13 +385,11 @@ void ofApp::draw() {
 		//fboColor.clear();
 	}
 
-
 	{
 		// Draw IR Source
 		kinect.getInfraredSource()->draw(0, previewHeight, DEPTH_WIDTH, DEPTH_HEIGHT);
 		//kinect.getLongExposureInfraredSource()->draw(0, previewHeight, previewWidth, previewHeight);
 	}
-
 
 	{
 		// Draw B+W cutout of Bodies
@@ -403,9 +406,7 @@ void ofApp::draw() {
 		//fboDepth.clear();
 	}
 
-	
 	{
-		
 		// greenscreen/keyed fx from coordmaping
 		//fboDepth.clear();
 		//ofClear(255, 255, 255, 0);
@@ -428,7 +429,6 @@ void ofApp::draw() {
 			ss << "and, a body is being tracked.";
 			ofDrawBitmapStringHighlight(ss.str(), previewWidth * 2 + 20, previewHeight - (previewHeight /2 + 60));
 		}
-
 	}
 
 	{
