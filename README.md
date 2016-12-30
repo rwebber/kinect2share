@@ -41,7 +41,7 @@ MIT License http://en.wikipedia.org/wiki/MIT_License
 Additional ofx addons are used:
 - ofxGui (create parameters gui) *core addon
 - ofxOsc (shares skeleton data) *core addon
-- ofxInputField (adds text filed for editing of OSC port & ip) https://github.com/fx-lange/ofxInputField
+- ofxInputField (adds text field for editing of OSC port & ip) https://github.com/fx-lange/ofxInputField
 - ofxSpout2 (shares video with other applications) https://github.com/Kj1/ofxSpout2
 
 
