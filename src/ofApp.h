@@ -60,6 +60,7 @@ public:
 	ofxToggle spoutCutOut;
 	ofxToggle spoutColor;
 	ofxToggle spoutKeyed;
+	ofxToggle spoutDepth;
 
 
 

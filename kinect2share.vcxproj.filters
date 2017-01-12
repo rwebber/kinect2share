@@ -208,10 +208,10 @@
       <UniqueIdentifier>{EED9D931-64B9-6EC6-5E54-A96C}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxInputField">
-      <UniqueIdentifier>{10b2353e-1319-475e-8e7b-0cef86b073cf}</UniqueIdentifier>
+      <UniqueIdentifier>{d71d4917-cfb6-48fe-bff1-1bfcd74917b6}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxInputField\src">
-      <UniqueIdentifier>{1c1924a8-8780-454f-a501-ef8dee2e275e}</UniqueIdentifier>
+      <UniqueIdentifier>{172e5e4a-7b42-47e2-a297-7aabc407c42d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

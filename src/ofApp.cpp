@@ -59,6 +59,7 @@ void ofApp::setup() {
 	SPOUTgroup.add(spoutCutOut.setup("BnW cutouts -> spout", true));
 	SPOUTgroup.add(spoutColor.setup("Color -> spout", true));
 	SPOUTgroup.add(spoutKeyed.setup("Keyed -> spout", true));
+	SPOUTgroup.add(spoutDepth.setup("Depth -> spout", true));
 	gui.add(&SPOUTgroup);
 
 	gui.loadFromFile("settings.xml");
@@ -367,7 +368,19 @@ void ofApp::draw() {
 		// Draw Depth Source
 		// TODO: brighten depth image. https://github.com/rickbarraza/KinectV2_Lessons/tree/master/3_MakeRawDepthBrigther
 		// MORE: https://forum.openframeworks.cc/t/kinect-v2-pixel-depth-and-color/18974/4
-		kinect.getDepthSource()->draw(0, 0, DEPTH_WIDTH, DEPTH_HEIGHT);  // note that the depth texture is RAW so may appear dark
+		//kinect.getDepthSource()->draw(0, 0, DEPTH_WIDTH, DEPTH_HEIGHT);  // note that the depth texture is RAW so may appear dark
+
+		fboDepth.begin(); // start drawing to off screenbuffer
+		ofClear(255, 255, 255, 0);
+		kinect.getDepthSource()->draw(0, 0, DEPTH_WIDTH, DEPTH_HEIGHT);
+		fboDepth.end();
+		//Spout
+		if (spoutDepth) {
+			spout.sendTexture(fboDepth.getTextureReference(), "kv2_depth");
+		}
+		//Draw from FBO
+		fboDepth.draw(0, 0, previewWidth, previewHeight);
+		//fboDepth.clear();
 	}
 
 	{
