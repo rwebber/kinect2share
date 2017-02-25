@@ -1,7 +1,7 @@
 #### kinect2share
 Share skeleton and video data from the Kinect V2 with Isadora and any other software which supports OSC (Open Sound Control) and Spout. 
 
-![Screen Shot including Isadora sample file](https://scontent.fybz1-1.fna.fbcdn.net/v/t31.0-8/14560244_630470323790498_5025290609800785012_o.png?oh=7e1f43b13631282a9c17daeffb2f893a&oe=59333227)
+![Screen Shot including Isadora sample file](https://raw.githubusercontent.com/rwebber/kinect2share/master/screenshots/sampleapp1.png)
 
 Kinect2share is a *Windows only* OpenFrameworks app based on the example projects included in [Elliot Woods](https://github.com/elliotwoods) fantastic OpenFrameworks plugin, [ofxKinectForWindows2](https://github.com/elliotwoods/ofxKinectForWindows2).
 
