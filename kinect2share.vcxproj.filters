@@ -390,4 +390,7 @@
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="screenshots\sampleapp1.png" />
+  </ItemGroup>
 </Project>
