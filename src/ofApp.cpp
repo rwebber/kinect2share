@@ -10,6 +10,8 @@
 int previewWidth = DEPTH_WIDTH / 2; // width and hieght of Depth Camera scaled
 int previewHeight = DEPTH_HEIGHT / 2;
 
+// TODO: look into https://forum.openframeworks.cc/t/ofxkinectforwindows2-depth-threshold-for-blob-tracking/19012/2
+
 //--------------------------------------------------------------
 void ofApp::setup() {
 	ofSetWindowTitle("kinect2share");
