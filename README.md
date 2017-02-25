@@ -29,7 +29,7 @@ MIT License http://en.wikipedia.org/wiki/MIT_License
 #### TODO
 - [video] Infrared
 - [video] Long Exposure Infrared
-- [video] Depth
+- ~~[video] Depth~~
 - [video] Keyed via GLSL
 - ~~[OSC] add body features (eg hands open/closed)~~
 - [video] add option to adjust levels for depth image / IR images
