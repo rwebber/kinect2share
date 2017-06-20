@@ -37,6 +37,9 @@
     <ClCompile Include="..\..\..\addons\ofxGui\src\ofxToggle.cpp">
       <Filter>addons\ofxGui\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxInputField\src\ofxInputField.cpp">
+      <Filter>addons\ofxInputField\src</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2\Data\Body.cpp">
       <Filter>addons\ofxKinectForWindows2\src\ofxKinectForWindows2\Data</Filter>
     </ClCompile>
@@ -69,6 +72,15 @@
     </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2\Utils.cpp">
       <Filter>addons\ofxKinectForWindows2\src\ofxKinectForWindows2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxNDI\src\ofxNDIreceiver.cpp">
+      <Filter>addons\ofxNDI\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxNDI\src\ofxNDIsender.cpp">
+      <Filter>addons\ofxNDI\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxNDI\src\ofxNDIutils.cpp">
+      <Filter>addons\ofxNDI\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxOsc\src\ofxOscBundle.cpp">
       <Filter>addons\ofxOsc\src</Filter>
@@ -136,9 +148,6 @@
     <ClCompile Include="..\..\..\addons\ofxSpout2\libs\src\SpoutSharedMemory.cpp">
       <Filter>addons\ofxSpout2\libs\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxInputField\src\ofxInputField.cpp">
-      <Filter>addons\ofxInputField\src</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -152,6 +161,12 @@
     </Filter>
     <Filter Include="addons\ofxGui\src">
       <UniqueIdentifier>{645E9533-4DCD-6179-1CDF-CB65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxInputField">
+      <UniqueIdentifier>{D638171E-C38D-0A35-CFB3-8971}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxInputField\src">
+      <UniqueIdentifier>{A25CD3D6-9534-BE4E-B514-C157}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxKinectForWindows2">
       <UniqueIdentifier>{79EE9CEE-5877-E1B3-C373-D5C8}</UniqueIdentifier>
@@ -167,6 +182,12 @@
     </Filter>
     <Filter Include="addons\ofxKinectForWindows2\src\ofxKinectForWindows2\Source">
       <UniqueIdentifier>{D8ABF3AE-C83C-4B28-80F0-8B6D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxNDI">
+      <UniqueIdentifier>{577C5AAC-F44E-A0BE-E58F-B066}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxNDI\src">
+      <UniqueIdentifier>{3BB183CD-62BF-E58A-FD5C-A603}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOsc">
       <UniqueIdentifier>{D91DCA33-6E5D-4481-2AEC-9FBB}</UniqueIdentifier>
@@ -207,12 +228,6 @@
     <Filter Include="addons\ofxSpout2\libs\src">
       <UniqueIdentifier>{EED9D931-64B9-6EC6-5E54-A96C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="addons\ofxInputField">
-      <UniqueIdentifier>{d71d4917-cfb6-48fe-bff1-1bfcd74917b6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxInputField\src">
-      <UniqueIdentifier>{172e5e4a-7b42-47e2-a297-7aabc407c42d}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofApp.h">
@@ -247,6 +262,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxGui\src\ofxToggle.h">
       <Filter>addons\ofxGui\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxInputField\src\ofxInputField.h">
+      <Filter>addons\ofxInputField\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2\Data\Body.h">
       <Filter>addons\ofxKinectForWindows2\src\ofxKinectForWindows2\Data</Filter>
@@ -286,6 +304,18 @@
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2.h">
       <Filter>addons\ofxKinectForWindows2\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxNDI\src\ofxNDI.h">
+      <Filter>addons\ofxNDI\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxNDI\src\ofxNDIreceiver.h">
+      <Filter>addons\ofxNDI\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxNDI\src\ofxNDIsender.h">
+      <Filter>addons\ofxNDI\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxNDI\src\ofxNDIutils.h">
+      <Filter>addons\ofxNDI\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxOsc\src\ofxOsc.h">
       <Filter>addons\ofxOsc\src</Filter>
@@ -383,14 +413,8 @@
     <ClInclude Include="..\..\..\addons\ofxSpout2\libs\include\SpoutSharedMemory.h">
       <Filter>addons\ofxSpout2\libs\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxInputField\src\ofxInputField.h">
-      <Filter>addons\ofxInputField\src</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="screenshots\sampleapp1.png" />
   </ItemGroup>
 </Project>

@@ -357,12 +357,50 @@ void ofApp::draw() {
 			spout.sendTexture(fboColor.getTextureReference(), color_StreamName);
 		}
 
-		//NDI
+		////NDI ********************************
+		////NDI ********************************
+		////NDI ********************************
+		//// For asynchronous sending, alternate between buffers because one buffer is being
+		//// filled in while the second is "in flight" and being processed by the API.
+		////ndiFbo = fboColor;
+
+		//if (ndiSender.GetAsync())
+		//	idx = (idx + 1) % 2;
+
+		//// Extract pixels from the fbo.
+		//if (bUsePBO) {
+		//	// Read fbo using two pbos
+		//	ReadFboPixels(fboColor, senderWidth, senderHeight, ndiBuffer[idx].getPixels());
+		//}
+		//else {
+		//	// Read fbo directly
+		//	fboColor.bind();
+		//	glReadPixels(0, 0, senderWidth, senderHeight, GL_RGBA, GL_UNSIGNED_BYTE, ndiBuffer[idx].getPixels());
+		//	fboColor.unbind();
+		//}
+
+		//// Send the RGBA ofPixels buffer to NDI
+		//// If you did not set the sender pixel format to RGBA in CreateSender
+		//// you can convert to bgra within SendImage (specify true for bSwapRB)
+		//if (ndiSender.SendImage(ndiBuffer[idx].getPixels(), senderWidth, senderHeight)) {
+		//	// Show what it is sending
+		//	char str[256];
+		//	sprintf(str, "Sending as : [%s] (%dx%d)", senderName, senderWidth, senderHeight);
+		//	ofDrawBitmapString(str, 20, 30);
+		//	// Show fps
+		//	sprintf(str, "fps: %3.3d", (int)ofGetFrameRate());
+		//	ofDrawBitmapString(str, ofGetWidth() - 120, 30);
+		//}
+		////NDI ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+		////NDI ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+		////NDI ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+		
 		// Set the sender name
 		strcpy(senderName, color_StreamName.c_str()); // convert fromt std string to cstring
-		sendNDI(fboColor, COLOR_WIDTH, COLOR_HEIGHT, senderName, color_ndiBuffer, color_idx);
+		// sendNDI(fboColor, COLOR_WIDTH, COLOR_HEIGHT, senderName, color_ndiBuffer, color_idx);
 
-		//Draw from FBO to UI
+		//Draw from FBO
 		fboColor.draw(previewWidth, 0 + colorTop, previewWidth, colorHeight);
 		//fboColor.clear();
 	}
