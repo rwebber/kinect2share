@@ -60,37 +60,80 @@ void ofApp::setup() {
 	//senderWidth = 1920; // HD	-	PBO 150fps / 120fps Async/Sync unclocked
 	//senderHeight = 1080; //			FBO  80fps /  75fps Async/Sync unclocked
 
-	int senderWidth = COLOR_WIDTH;
-	int senderHeight = COLOR_HEIGHT;
 
-	// Create an fbo for collection of data
-	//ndiFbo.allocate(senderWidth, senderHeight, GL_RGBA);
+	// Optionally set NDI asynchronous sending instead of clocked at 60fps
+	ndiSender1.SetAsync(false); // change to true for async
+	ndiSender2.SetAsync(false); // change to true for async
+
+	int senderWidth;
+	int senderHeight;
+
+	//==================================================
+	//==================================================
+	senderWidth = COLOR_WIDTH;
+	senderHeight = COLOR_HEIGHT;
 
 	// Initialize ofPixel buffers
 	color_ndiBuffer[0].allocate(senderWidth, senderHeight, 4);
 	color_ndiBuffer[1].allocate(senderWidth, senderHeight, 4);
 
-	// Optionally set NDI asynchronous sending instead of clocked at 60fps
-	ndiSender.SetAsync(false); // change to true for async
-
 	//// Create a new sender
-	//// Specify RGBA format here
 	color_StreamName = "kv2_color";
 	strcpy(senderName, color_StreamName.c_str());
-	ndiSender.CreateSender(senderName, senderWidth, senderHeight, NDIlib_FourCC_type_RGBA);
+	ndiSender1.CreateSender(senderName, senderWidth, senderHeight, NDIlib_FourCC_type_RGBA); //// Specify RGBA format here
 	cout << "Created NDI sender [" << senderName << "] (" << senderWidth << "x" << senderHeight << ")" << endl;
 	color_idx = 0; // index used for buffer swapping
 
+	//==================================================
+	//==================================================
+	senderWidth = DEPTH_WIDTH;
+	senderHeight = DEPTH_HEIGHT;
+
+	// Initialize ofPixel buffers
+	cutout_ndiBuffer[0].allocate(senderWidth, senderHeight, 4);
+	cutout_ndiBuffer[1].allocate(senderWidth, senderHeight, 4);
+
+	// Create a new sender
+	cutout_StreamName = "kv2_cutout";
+	strcpy(senderName, cutout_StreamName.c_str());
+	ndiSender2.CreateSender(senderName, senderWidth, senderHeight, NDIlib_FourCC_type_RGBA); //// Specify RGBA format here
+	cout << "Created NDI sender [" << senderName << "] (" << senderWidth << "x" << senderHeight << ")" << endl;
+	cutout_idx = 0; // index used for buffer swapping
+
+
+
+
+	//NDI SENDER 1 =====================================
+	//==================================================
 	// Initialize OpenGL pbos for asynchronous read of fbo data
-	glGenBuffers(2, ndiPbo);
-	glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, ndiPbo[0]);
+
+	senderWidth = COLOR_WIDTH; // DUSX resetting to work with color_ndi
+	senderHeight = COLOR_HEIGHT;
+	glGenBuffers(2, ndiPbo1);
+	glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, ndiPbo1[0]);
 	glBufferDataARB(GL_PIXEL_UNPACK_BUFFER_ARB, senderWidth*senderHeight * 4, 0, GL_STREAM_READ);
-	glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, ndiPbo[1]);
+	glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, ndiPbo1[1]);
 	glBufferDataARB(GL_PIXEL_UNPACK_BUFFER_ARB, senderWidth*senderHeight * 4, 0, GL_STREAM_READ);
 	glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0);
+	Pbo1Index = NextPbo1Index = 0;
+	bUsePBO1 = true; // Change to false to compare  // DUSX was originally true
 
-	PboIndex = NextPboIndex = 0;
-	bUsePBO = true; // Change to false to compare
+
+
+	//NDI SENDER 1 =====================================
+	//==================================================
+	// Initialize OpenGL pbos for asynchronous read of fbo data
+
+	senderWidth = COLOR_WIDTH; // DUSX resetting to work with color_ndi
+	senderHeight = COLOR_HEIGHT;
+	glGenBuffers(2, ndiPbo1);
+	glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, ndiPbo1[0]);
+	glBufferDataARB(GL_PIXEL_UNPACK_BUFFER_ARB, senderWidth*senderHeight * 4, 0, GL_STREAM_READ);
+	glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, ndiPbo1[1]);
+	glBufferDataARB(GL_PIXEL_UNPACK_BUFFER_ARB, senderWidth*senderHeight * 4, 0, GL_STREAM_READ);
+	glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0);
+	Pbo1Index = NextPbo1Index = 0;
+	bUsePBO1 = true; // Change to false to compare  // DUSX was originally true
 	
 	// NDI setup DONE ^ ^ ^ * * * * * * * * * *
 	// NDI setup DONE ^ ^ ^ * * * * * * * * * *
@@ -359,8 +402,8 @@ void ofApp::draw() {
 
 		//NDI
 		// Set the sender name
-		strcpy(senderName, color_StreamName.c_str()); // convert fromt std string to cstring
-		sendNDI(fboColor, COLOR_WIDTH, COLOR_HEIGHT, senderName, color_ndiBuffer, color_idx);
+		strcpy(senderName, color_StreamName.c_str()); // convert from std string to cstring
+		sendNDI(ndiSender1, fboColor, bUsePBO1, COLOR_WIDTH, COLOR_HEIGHT, senderName, color_ndiBuffer, color_idx);
 
 		//Draw from FBO to UI
 		fboColor.draw(previewWidth, 0 + colorTop, previewWidth, colorHeight);
@@ -383,6 +426,12 @@ void ofApp::draw() {
 		if (spoutCutOut) {
 			spout.sendTexture(fboDepth.getTextureReference(), "kv2_cutout");
 		}
+
+		// NDI
+		// Set the sender name
+		strcpy(senderName, cutout_StreamName.c_str()); // convert from std string to cstring
+		sendNDI(ndiSender2, fboDepth, bUsePBO2, DEPTH_WIDTH, DEPTH_HEIGHT, senderName, cutout_ndiBuffer, cutout_idx);
+
 		//Draw from FBO
 		fboDepth.draw(previewWidth, previewHeight, previewWidth, previewHeight);
 		//fboDepth.clear();
@@ -454,7 +503,8 @@ void ofApp::draw() {
 
 void ofApp::exit() {
 	gui.saveToFile("settings.xml");
-	if (ndiPbo[0]) glDeleteBuffers(2, ndiPbo); // clean up NDI
+	if (ndiPbo1[0]) glDeleteBuffers(2, ndiPbo1); // clean up NDI_1 - HD
+	if (ndiPbo2[0]) glDeleteBuffers(2, ndiPbo2); // clean up NDI_2 - DepthsSize
 }
 
 string ofApp::escape_quotes(const string &before)
@@ -548,7 +598,7 @@ void ofApp::body2JSON(vector<ofxKinectForWindows2::Data::Body> bodies, const cha
 
 // NDI
 // makes sending more modular
-void ofApp::sendNDI(ofFbo & sourceFBO, int senderWidth, int senderHeight, char senderName[256], ofPixels ndiBuffer[], int idx)
+void ofApp::sendNDI(ofxNDIsender & ndiSender, ofFbo & sourceFBO, bool bUsePBO, int senderWidth, int senderHeight, char senderName[256], ofPixels ndiBuffer[], int idx)
 {
 	if (ndiSender.GetAsync())
 		idx = (idx + 1) % 2;
@@ -556,13 +606,15 @@ void ofApp::sendNDI(ofFbo & sourceFBO, int senderWidth, int senderHeight, char s
 	// Extract pixels from the fbo.
 	if (bUsePBO) {
 		// Read fbo using two pbos
-		ReadFboPixels(fboColor, senderWidth, senderHeight, ndiBuffer[idx].getPixels());
+		// if (&ndiSender == &ndiSender1) {}
+			ReadFboPixels(sourceFBO, senderWidth, senderHeight, ndiBuffer[idx].getPixels());
+		
 	}
 	else {
 		// Read fbo directly
-		fboColor.bind();
+		sourceFBO.bind();
 		glReadPixels(0, 0, senderWidth, senderHeight, GL_RGBA, GL_UNSIGNED_BYTE, ndiBuffer[idx].getPixels());
-		fboColor.unbind();
+		sourceFBO.unbind();
 	}
 
 	// Send the RGBA ofPixels buffer to NDI
@@ -588,8 +640,8 @@ bool ofApp::ReadFboPixels(ofFbo fbo, unsigned int width, unsigned int height, un
 {
 	void *pboMemory;
 
-	PboIndex = (PboIndex + 1) % 2;
-	NextPboIndex = (PboIndex + 1) % 2;
+	Pbo1Index = (Pbo1Index + 1) % 2;
+	NextPbo1Index = (Pbo1Index + 1) % 2;
 
 	// Bind the fbo passed in
 	fbo.bind();
@@ -598,7 +650,7 @@ bool ofApp::ReadFboPixels(ofFbo fbo, unsigned int width, unsigned int height, un
 	glReadBuffer(GL_FRONT);
 
 	// Bind the current PBO
-	glBindBuffer(GL_PIXEL_PACK_BUFFER, ndiPbo[PboIndex]);
+	glBindBuffer(GL_PIXEL_PACK_BUFFER, ndiPbo1[Pbo1Index]);
 
 	// Read pixels from framebuffer to the current PBO - glReadPixels() should return immediately.
 	//glReadPixels(0, 0, width, height, GL_BGRA_EXT GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid *)0);
@@ -606,7 +658,7 @@ bool ofApp::ReadFboPixels(ofFbo fbo, unsigned int width, unsigned int height, un
 	glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid *)0);
 
 	// Map the previous PBO to process its data by CPU
-	glBindBuffer(GL_PIXEL_PACK_BUFFER, ndiPbo[NextPboIndex]);
+	glBindBuffer(GL_PIXEL_PACK_BUFFER, ndiPbo1[NextPbo1Index]);
 	pboMemory = glMapBuffer(GL_PIXEL_PACK_BUFFER, GL_READ_ONLY);
 	if (pboMemory) {
 		// Use SSE2 mempcy
@@ -624,8 +676,8 @@ bool ofApp::ReadFboPixels(ofFbo fbo, unsigned int width, unsigned int height, un
 	fbo.unbind();
 
 	return true;
-
 }
+
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
 

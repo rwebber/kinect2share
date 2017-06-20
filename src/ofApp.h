@@ -53,8 +53,10 @@ public:
 
 	//  *** added from NDI sender example ***
 	// NDI definitions
-	ofxNDIsender ndiSender;    // NDI sender object
+	ofxNDIsender ndiSender1;    // NDI sender object, HD format (color_)
+	ofxNDIsender ndiSender2;	// Depth-Image format (cutout_)
 	string color_StreamName;
+	string cutout_StreamName;
 	char senderName[256];      // for conversions... char[] required for ndiSender functions
 
 	// NOTE using W+H defined already
@@ -65,13 +67,23 @@ public:
 
 	// NOTE: need a Buffer array and a index used for async for EACH NDIstream being created
 	ofPixels color_ndiBuffer[2];     // Two pixel buffers for async sending
+	ofPixels cutout_ndiBuffer[2];     // Two pixel buffers for async sending
 	int color_idx;                   // Index used for async buffer swapping			???
+	int cutout_idx;
 
-	// TODO ???? may need a set of these for each NDIstream
-	GLuint ndiPbo[2];
-	int PboIndex;
-	int NextPboIndex;
-	bool bUsePBO;
+	// PBO and control vars for ndiSender1
+	GLuint ndiPbo1[2];
+	int Pbo1Index;
+	int NextPbo1Index;
+	bool bUsePBO1;
+
+	// PBO and control vars for ndiSender1
+	GLuint ndiPbo2[2];
+	int Pbo2Index;
+	int NextPbo2Index;
+	bool bUsePBO2;
+
+
 	bool ReadFboPixels(ofFbo fbo, unsigned int width, unsigned int height, unsigned char *data);
 	//  ^^^ added from NDI sender example ^^^
 
@@ -104,5 +116,5 @@ public:
 	// helper Functions
 	string escape_quotes(const string & before);
 	void body2JSON(vector<ofxKinectForWindows2::Data::Body> bodies, const char * jointNames[]);
-	void sendNDI(ofFbo & sourceFBO, int senderWidth, int senderHeight, char senderName[256], ofPixels ndiBuffer[], int idx);
+	void sendNDI(ofxNDIsender & ndiSender, ofFbo & sourceFBO, bool bUsePBO,  int senderWidth, int senderHeight, char senderName[256], ofPixels ndiBuffer[], int idx);
 };
