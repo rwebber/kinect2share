@@ -55,8 +55,10 @@ public:
 	// NDI definitions
 	ofxNDIsender ndiSender1;    // NDI sender object, HD format (color_)
 	ofxNDIsender ndiSender2;	// Depth-Image format (cutout_)
+	ofxNDIsender ndiSender3;	// INFRARED
 	string color_StreamName;
 	string cutout_StreamName;
+	string infrared_StreamName;
 	char senderName[256];      // for conversions... char[] required for ndiSender functions
 
 	// NOTE using W+H defined already
@@ -68,8 +70,10 @@ public:
 	// NOTE: need a Buffer array and a index used for async for EACH NDIstream being created
 	ofPixels color_ndiBuffer[2];     // Two pixel buffers for async sending
 	ofPixels cutout_ndiBuffer[2];     // Two pixel buffers for async sending
+	ofPixels infrared_ndiBuffer[2];     // Two pixel buffers for async sending
 	int color_idx;                   // Index used for async buffer swapping			???
 	int cutout_idx;
+	int infrared_idx;
 
 	// PBO and control vars for ndiSender1
 	GLuint ndiPbo1[2];

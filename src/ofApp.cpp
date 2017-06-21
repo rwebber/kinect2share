@@ -64,6 +64,7 @@ void ofApp::setup() {
 	// Optionally set NDI asynchronous sending instead of clocked at 60fps
 	ndiSender1.SetAsync(false); // change to true for async
 	ndiSender2.SetAsync(false); // change to true for async
+	ndiSender3.SetAsync(false); // change to true for async
 
 	int senderWidth;
 	int senderHeight;
@@ -84,6 +85,7 @@ void ofApp::setup() {
 	cout << "Created NDI sender [" << senderName << "] (" << senderWidth << "x" << senderHeight << ")" << endl;
 	color_idx = 0; // index used for buffer swapping
 
+
 	//==================================================
 	//==================================================
 	senderWidth = DEPTH_WIDTH;
@@ -99,6 +101,23 @@ void ofApp::setup() {
 	ndiSender2.CreateSender(senderName, senderWidth, senderHeight, NDIlib_FourCC_type_RGBA); //// Specify RGBA format here
 	cout << "Created NDI sender [" << senderName << "] (" << senderWidth << "x" << senderHeight << ")" << endl;
 	cutout_idx = 0; // index used for buffer swapping
+
+
+	//==================================================
+	//==================================================
+	senderWidth = DEPTH_WIDTH;
+	senderHeight = DEPTH_HEIGHT;
+
+	// Initialize ofPixel buffers
+	infrared_ndiBuffer[0].allocate(senderWidth, senderHeight, 4);
+	infrared_ndiBuffer[1].allocate(senderWidth, senderHeight, 4);
+
+	// Create a new sender
+	infrared_StreamName = "kv2_infrared";
+	strcpy(senderName, infrared_StreamName.c_str());
+	ndiSender3.CreateSender(senderName, senderWidth, senderHeight, NDIlib_FourCC_type_RGBA); //// Specify RGBA format here
+	cout << "Created NDI sender [" << senderName << "] (" << senderWidth << "x" << senderHeight << ")" << endl;
+	infrared_idx = 0; // index used for buffer swapping
 
 
 
@@ -133,7 +152,7 @@ void ofApp::setup() {
 	glBufferDataARB(GL_PIXEL_UNPACK_BUFFER_ARB, senderWidth*senderHeight * 4, 0, GL_STREAM_READ);
 	glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0);
 	Pbo2Index = NextPbo2Index = 0;
-	bUsePBO2 = false; // Change to false to compare  // DUSX was originally true
+	bUsePBO2 = true; // Change to false to compare  // DUSX was originally true
 	
 	// NDI setup DONE ^ ^ ^ * * * * * * * * * *
 	// NDI setup DONE ^ ^ ^ * * * * * * * * * *
@@ -414,6 +433,11 @@ void ofApp::draw() {
 		// Draw IR Source
 		kinect.getInfraredSource()->draw(0, previewHeight, DEPTH_WIDTH, DEPTH_HEIGHT);
 		//kinect.getLongExposureInfraredSource()->draw(0, previewHeight, previewWidth, previewHeight);
+
+		// NDI
+		// Set the sender name
+		strcpy(senderName, infrared_StreamName.c_str()); // convert from std string to cstring
+		sendNDI(ndiSender3, fboDepth, bUsePBO2, DEPTH_WIDTH, DEPTH_HEIGHT, senderName, infrared_ndiBuffer, infrared_idx);
 	}
 
 	{
