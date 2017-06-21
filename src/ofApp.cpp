@@ -103,7 +103,7 @@ void ofApp::setup() {
 
 
 
-	//NDI SENDER 1 =====================================
+	//NDI SENDER 1 colorSize============================
 	//==================================================
 	// Initialize OpenGL pbos for asynchronous read of fbo data
 
@@ -120,20 +120,20 @@ void ofApp::setup() {
 
 
 
-	//NDI SENDER 1 =====================================
+	//NDI SENDER 2 depthSize============================
 	//==================================================
 	// Initialize OpenGL pbos for asynchronous read of fbo data
 
-	senderWidth = COLOR_WIDTH; // DUSX resetting to work with color_ndi
-	senderHeight = COLOR_HEIGHT;
-	glGenBuffers(2, ndiPbo1);
-	glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, ndiPbo1[0]);
+	senderWidth = DEPTH_WIDTH; // DUSX resetting to work with color_ndi
+	senderHeight = DEPTH_HEIGHT;
+	glGenBuffers(2, ndiPbo2);
+	glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, ndiPbo2[0]);
 	glBufferDataARB(GL_PIXEL_UNPACK_BUFFER_ARB, senderWidth*senderHeight * 4, 0, GL_STREAM_READ);
-	glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, ndiPbo1[1]);
+	glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, ndiPbo2[1]);
 	glBufferDataARB(GL_PIXEL_UNPACK_BUFFER_ARB, senderWidth*senderHeight * 4, 0, GL_STREAM_READ);
 	glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0);
-	Pbo1Index = NextPbo1Index = 0;
-	bUsePBO1 = true; // Change to false to compare  // DUSX was originally true
+	Pbo2Index = NextPbo2Index = 0;
+	bUsePBO2 = false; // Change to false to compare  // DUSX was originally true
 	
 	// NDI setup DONE ^ ^ ^ * * * * * * * * * *
 	// NDI setup DONE ^ ^ ^ * * * * * * * * * *
@@ -598,36 +598,37 @@ void ofApp::body2JSON(vector<ofxKinectForWindows2::Data::Body> bodies, const cha
 
 // NDI
 // makes sending more modular
-void ofApp::sendNDI(ofxNDIsender & ndiSender, ofFbo & sourceFBO, bool bUsePBO, int senderWidth, int senderHeight, char senderName[256], ofPixels ndiBuffer[], int idx)
+void ofApp::sendNDI(ofxNDIsender & ndiSender_, ofFbo & sourceFBO_, 
+	bool bUsePBO_, int senderWidth_, int senderHeight_, char senderName_[256], ofPixels ndiBuffer_[], int idx_)
 {
-	if (ndiSender.GetAsync())
-		idx = (idx + 1) % 2;
+	if (ndiSender_.GetAsync())
+		idx_ = (idx_ + 1) % 2;
 
 	// Extract pixels from the fbo.
-	if (bUsePBO) {
+	if (bUsePBO_) {
 		// Read fbo using two pbos
 		// if (&ndiSender == &ndiSender1) {}
-			ReadFboPixels(sourceFBO, senderWidth, senderHeight, ndiBuffer[idx].getPixels());
+			ReadFboPixels(sourceFBO_, senderWidth_, senderHeight_, ndiBuffer_[idx_].getPixels());
 		
 	}
 	else {
 		// Read fbo directly
-		sourceFBO.bind();
-		glReadPixels(0, 0, senderWidth, senderHeight, GL_RGBA, GL_UNSIGNED_BYTE, ndiBuffer[idx].getPixels());
-		sourceFBO.unbind();
+		sourceFBO_.bind();
+		glReadPixels(0, 0, senderWidth_, senderHeight_, GL_RGBA, GL_UNSIGNED_BYTE, ndiBuffer_[idx_].getPixels());
+		sourceFBO_.unbind();
 	}
 
 	// Send the RGBA ofPixels buffer to NDI
 	// If you did not set the sender pixel format to RGBA in CreateSender
 	// you can convert to bgra within SendImage (specify true for bSwapRB)
-	if (ndiSender.SendImage(ndiBuffer[idx].getPixels(), senderWidth, senderHeight)) {
+	if (ndiSender_.SendImage(ndiBuffer_[idx_].getPixels(), senderWidth_, senderHeight_)) {
 		// Show what it is sending
 		char str[256];
-		sprintf(str, "Sending as : [%s] (%dx%d)", senderName, senderWidth, senderHeight);
-		ofDrawBitmapString(str, 20, 30);
+		sprintf(str, "Sending as : [%s] (%dx%d)", senderName, senderWidth_, senderHeight_);
+		ofDrawBitmapString(str, 20, 50);
 		// Show fps
 		sprintf(str, "fps: %3.3d", (int)ofGetFrameRate());
-		ofDrawBitmapString(str, ofGetWidth() - 120, 30);
+		ofDrawBitmapString(str, 20, 70); // ofGetWidth() - 120
 	}
 }
 
@@ -640,25 +641,40 @@ bool ofApp::ReadFboPixels(ofFbo fbo, unsigned int width, unsigned int height, un
 {
 	void *pboMemory;
 
-	Pbo1Index = (Pbo1Index + 1) % 2;
-	NextPbo1Index = (Pbo1Index + 1) % 2;
+	if (width == COLOR_WIDTH) {
+		// dealing with HD size video
+		Pbo1Index = (Pbo1Index + 1) % 2;
+		NextPbo1Index = (Pbo1Index + 1) % 2;
 
-	// Bind the fbo passed in
-	fbo.bind();
+		// Bind the fbo passed in
+		fbo.bind();
 
-	// Set the target framebuffer to read
-	glReadBuffer(GL_FRONT);
+		// Set the target framebuffer to read
+		glReadBuffer(GL_FRONT);
 
-	// Bind the current PBO
-	glBindBuffer(GL_PIXEL_PACK_BUFFER, ndiPbo1[Pbo1Index]);
+		// Bind the current PBO
+		glBindBuffer(GL_PIXEL_PACK_BUFFER, ndiPbo1[Pbo1Index]);
 
-	// Read pixels from framebuffer to the current PBO - glReadPixels() should return immediately.
-	//glReadPixels(0, 0, width, height, GL_BGRA_EXT GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid *)0);
-	// Send RGBA
-	glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid *)0);
+		// Read pixels from framebuffer to the current PBO - glReadPixels() should return immediately.
+		//glReadPixels(0, 0, width, height, GL_BGRA_EXT GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid *)0);
+		// Send RGBA
+		glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid *)0);
 
-	// Map the previous PBO to process its data by CPU
-	glBindBuffer(GL_PIXEL_PACK_BUFFER, ndiPbo1[NextPbo1Index]);
+		// Map the previous PBO to process its data by CPU
+		glBindBuffer(GL_PIXEL_PACK_BUFFER, ndiPbo1[NextPbo1Index]);
+	}
+	else {
+		// dealing with depth size video
+		Pbo2Index = (Pbo2Index + 1) % 2;
+		NextPbo2Index = (Pbo2Index + 1) % 2;
+		fbo.bind();
+		glReadBuffer(GL_FRONT);
+		glBindBuffer(GL_PIXEL_PACK_BUFFER, ndiPbo2[Pbo2Index]);
+		glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid *)0);
+		glBindBuffer(GL_PIXEL_PACK_BUFFER, ndiPbo2[NextPbo2Index]);
+	}
+
+
 	pboMemory = glMapBuffer(GL_PIXEL_PACK_BUFFER, GL_READ_ONLY);
 	if (pboMemory) {
 		// Use SSE2 mempcy
