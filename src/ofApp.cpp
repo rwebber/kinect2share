@@ -10,6 +10,8 @@
 int previewWidth = DEPTH_WIDTH / 2; // width and hieght of Depth Camera scaled
 int previewHeight = DEPTH_HEIGHT / 2;
 
+string guiFile = "settings.xml";
+
 // REF: http://www.cplusplus.com/reference/cstring/
 
 // TODO: look into https://forum.openframeworks.cc/t/ofxkinectforwindows2-depth-threshold-for-blob-tracking/19012/2
@@ -48,125 +50,11 @@ void ofApp::setup() {
 	fboColor.allocate(COLOR_WIDTH, COLOR_HEIGHT, GL_RGB); //setup offscreen buffer in openGL RGB mode
 
 
-
-
-	// NDI setup * * * * * * * * * * * * * 
-	// NDI setup * * * * * * * * * * * * * 
-	// NDI setup * * * * * * * * * * * * * 
-
-	cout << "NDI SDK copyright NewTek (http:\\NDI.NewTek.com)" << endl;
-	// Set the dimensions of the sender output here
-	// This is independent of the size of the display window
-	//senderWidth = 1920; // HD	-	PBO 150fps / 120fps Async/Sync unclocked
-	//senderHeight = 1080; //			FBO  80fps /  75fps Async/Sync unclocked
-
-
-	// Optionally set NDI asynchronous sending instead of clocked at 60fps
-	ndiSender1.SetAsync(false); // change to true for async
-	ndiSender2.SetAsync(false); // change to true for async
-	ndiSender3.SetAsync(false); // change to true for async
-
-	int senderWidth;
-	int senderHeight;
-
-	//==================================================
-	//==================================================
-	senderWidth = COLOR_WIDTH;
-	senderHeight = COLOR_HEIGHT;
-
-	// Initialize ofPixel buffers
-	color_ndiBuffer[0].allocate(senderWidth, senderHeight, 4);
-	color_ndiBuffer[1].allocate(senderWidth, senderHeight, 4);
-
-	//// Create a new sender
-	color_StreamName = "kv2_color";
-	strcpy(senderName, color_StreamName.c_str());
-	ndiSender1.CreateSender(senderName, senderWidth, senderHeight, NDIlib_FourCC_type_RGBA); //// Specify RGBA format here
-	cout << "Created NDI sender [" << senderName << "] (" << senderWidth << "x" << senderHeight << ")" << endl;
-	color_idx = 0; // index used for buffer swapping
-
-
-	//==================================================
-	//==================================================
-	senderWidth = DEPTH_WIDTH;
-	senderHeight = DEPTH_HEIGHT;
-
-	// Initialize ofPixel buffers
-	cutout_ndiBuffer[0].allocate(senderWidth, senderHeight, 4);
-	cutout_ndiBuffer[1].allocate(senderWidth, senderHeight, 4);
-
-	// Create a new sender
-	cutout_StreamName = "kv2_cutout";
-	strcpy(senderName, cutout_StreamName.c_str());
-	ndiSender2.CreateSender(senderName, senderWidth, senderHeight, NDIlib_FourCC_type_RGBA); //// Specify RGBA format here
-	cout << "Created NDI sender [" << senderName << "] (" << senderWidth << "x" << senderHeight << ")" << endl;
-	cutout_idx = 0; // index used for buffer swapping
-
-
-	//==================================================
-	//==================================================
-	senderWidth = DEPTH_WIDTH;
-	senderHeight = DEPTH_HEIGHT;
-
-	// Initialize ofPixel buffers
-	infrared_ndiBuffer[0].allocate(senderWidth, senderHeight, 4);
-	infrared_ndiBuffer[1].allocate(senderWidth, senderHeight, 4);
-
-	// Create a new sender
-	infrared_StreamName = "kv2_infrared";
-	strcpy(senderName, infrared_StreamName.c_str());
-	ndiSender3.CreateSender(senderName, senderWidth, senderHeight, NDIlib_FourCC_type_RGBA); //// Specify RGBA format here
-	cout << "Created NDI sender [" << senderName << "] (" << senderWidth << "x" << senderHeight << ")" << endl;
-	infrared_idx = 0; // index used for buffer swapping
-
-
-
-
-	//NDI SENDER 1 colorSize============================
-	//==================================================
-	// Initialize OpenGL pbos for asynchronous read of fbo data
-
-	senderWidth = COLOR_WIDTH; // DUSX resetting to work with color_ndi
-	senderHeight = COLOR_HEIGHT;
-	glGenBuffers(2, ndiPbo1);
-	glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, ndiPbo1[0]);
-	glBufferDataARB(GL_PIXEL_UNPACK_BUFFER_ARB, senderWidth*senderHeight * 4, 0, GL_STREAM_READ);
-	glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, ndiPbo1[1]);
-	glBufferDataARB(GL_PIXEL_UNPACK_BUFFER_ARB, senderWidth*senderHeight * 4, 0, GL_STREAM_READ);
-	glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0);
-	Pbo1Index = NextPbo1Index = 0;
-	bUsePBO1 = true; // Change to false to compare  // DUSX was originally true
-
-
-
-	//NDI SENDER 2 depthSize============================
-	//==================================================
-	// Initialize OpenGL pbos for asynchronous read of fbo data
-
-	senderWidth = DEPTH_WIDTH; // DUSX resetting to work with color_ndi
-	senderHeight = DEPTH_HEIGHT;
-	glGenBuffers(2, ndiPbo2);
-	glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, ndiPbo2[0]);
-	glBufferDataARB(GL_PIXEL_UNPACK_BUFFER_ARB, senderWidth*senderHeight * 4, 0, GL_STREAM_READ);
-	glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, ndiPbo2[1]);
-	glBufferDataARB(GL_PIXEL_UNPACK_BUFFER_ARB, senderWidth*senderHeight * 4, 0, GL_STREAM_READ);
-	glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0);
-	Pbo2Index = NextPbo2Index = 0;
-	bUsePBO2 = true; // Change to false to compare  // DUSX was originally true
-	
-	// NDI setup DONE ^ ^ ^ * * * * * * * * * *
-	// NDI setup DONE ^ ^ ^ * * * * * * * * * *
-	// NDI setup DONE ^ ^ ^ * * * * * * * * * *
-
-
-
-
-	gui.setup("Parameters", "settings.xml");
-	//ofColor paramBG(0, 255, 0);
+	// GUI SETUP ***************** http://openframeworks.cc/documentation/ofxGui/
+	gui.setup("Parameters", guiFile);
 	gui.setHeaderBackgroundColor(ofColor::darkRed);
 	gui.setBorderColor(ofColor::darkRed);
-	//gui.setBackgroundColor(ofColor::darkRed);
-	//gui.setFillColor(ofColor::darkRed);
+	//gui.setDefaultWidth(320);
 
 	OSCgroup.setup("OSC");
 	OSCgroup.add(jsonGrouped.setup("OSC as JSON", true));
@@ -181,12 +69,148 @@ void ofApp::setup() {
 	SPOUTgroup.add(spoutDepth.setup("Depth -> spout", true));
 	gui.add(&SPOUTgroup);
 
-	gui.loadFromFile("settings.xml");
+	NDIgroup.setup("NDI");
+	NDIgroup.add(ndiActive.setup("On-Off <reboot>", true));
+	NDIgroup.add(ndiCutOut.setup("BnW cutouts -> NDI", true));
+	NDIgroup.add(ndiColor.setup("Color -> NDI", true));
+	NDIgroup.add(ndiKeyed.setup("Keyed -> NDI", true));
+	NDIgroup.add(ndiDepth.setup("Depth -> NDI", true));
+	gui.add(&NDIgroup);
+
+	gui.loadFromFile(guiFile);
 	
 	// HostField.addListener(this, &ofApp::HostFieldChanged);
 
+
+	// OSC setup  * * * * * * * * * * * * *
+	// OSC setup  * * * * * * * * * * * * *
+	// OSC setup  * * * * * * * * * * * * *
 	oscSender.disableBroadcast();
 	oscSender.setup(HostField, oscPort);
+
+
+	// NDI setup * * * * * * * * * * * * * 
+	// NDI setup * * * * * * * * * * * * * 
+	// NDI setup * * * * * * * * * * * * * 
+
+	if (ndiActive){
+		NDIlock = false;
+		cout << "NDI SDK copyright NewTek (http:\\NDI.NewTek.com)" << endl;
+		// Set the dimensions of the sender output here
+		// This is independent of the size of the display window
+		//senderWidth = 1920; // HD	-	PBO 150fps / 120fps Async/Sync unclocked
+		//senderHeight = 1080; //		FBO  80fps /  75fps Async/Sync unclocked
+
+		// TODO : async currently doesn't work???
+		// Optionally set NDI asynchronous sending instead of clocked at 60fps
+		ndiSender1.SetAsync(false); // change to true for async
+		ndiSender2.SetAsync(false); // change to true for async
+		ndiSender3.SetAsync(false); // change to true for async
+		ndiSender4.SetAsync(false); // change to true for async
+
+		int senderWidth;
+		int senderHeight;
+
+		//==================================================
+		//==================================================
+		senderWidth = COLOR_WIDTH;
+		senderHeight = COLOR_HEIGHT;
+
+		// Initialize ofPixel buffers
+		color_ndiBuffer[0].allocate(senderWidth, senderHeight, 4);
+		color_ndiBuffer[1].allocate(senderWidth, senderHeight, 4);
+
+		//// Create a new sender
+		color_StreamName = "kv2_color";
+		strcpy(senderName, color_StreamName.c_str());
+		ndiSender1.CreateSender(senderName, senderWidth, senderHeight, NDIlib_FourCC_type_RGBA); //// Specify RGBA format here
+		cout << "Created NDI sender [" << senderName << "] (" << senderWidth << "x" << senderHeight << ")" << endl;
+		color_idx = 0; // index used for buffer swapping
+
+		//==================================================
+		//==================================================
+		senderWidth = DEPTH_WIDTH;
+		senderHeight = DEPTH_HEIGHT;
+
+		// Initialize ofPixel buffers
+		cutout_ndiBuffer[0].allocate(senderWidth, senderHeight, 4);
+		cutout_ndiBuffer[1].allocate(senderWidth, senderHeight, 4);
+
+		// Create a new sender
+		cutout_StreamName = "kv2_cutout";
+		strcpy(senderName, cutout_StreamName.c_str());
+		ndiSender2.CreateSender(senderName, senderWidth, senderHeight, NDIlib_FourCC_type_RGBA); //// Specify RGBA format here
+		cout << "Created NDI sender [" << senderName << "] (" << senderWidth << "x" << senderHeight << ")" << endl;
+		cutout_idx = 0; // index used for buffer swapping
+
+		//==================================================
+		//==================================================
+		senderWidth = DEPTH_WIDTH;
+		senderHeight = DEPTH_HEIGHT;
+
+		// Initialize ofPixel buffers
+		depth_ndiBuffer[0].allocate(senderWidth, senderHeight, 4);
+		depth_ndiBuffer[1].allocate(senderWidth, senderHeight, 4);
+
+		// Create a new sender
+		depth_StreamName = "kv2_depth";
+		strcpy(senderName, depth_StreamName.c_str());
+		ndiSender3.CreateSender(senderName, senderWidth, senderHeight, NDIlib_FourCC_type_RGBA); //// Specify RGBA format here
+		cout << "Created NDI sender [" << senderName << "] (" << senderWidth << "x" << senderHeight << ")" << endl;
+		depth_idx = 0; // index used for buffer swapping
+
+		//==================================================
+		//==================================================
+		senderWidth = DEPTH_WIDTH;
+		senderHeight = DEPTH_HEIGHT;
+
+		// Initialize ofPixel buffers
+		keyed_ndiBuffer[0].allocate(senderWidth, senderHeight, 4);
+		keyed_ndiBuffer[1].allocate(senderWidth, senderHeight, 4);
+
+		// Create a new sender
+		keyed_StreamName = "kv2_keyed";
+		strcpy(senderName, keyed_StreamName.c_str());
+		ndiSender4.CreateSender(senderName, senderWidth, senderHeight, NDIlib_FourCC_type_RGBA); //// Specify RGBA format here
+		cout << "Created NDI sender [" << senderName << "] (" << senderWidth << "x" << senderHeight << ")" << endl;
+		keyed_idx = 0; // index used for buffer swapping
+
+		//NDI SENDER 1 colorSize============================
+		//==================================================
+		// Initialize OpenGL pbos for asynchronous read of fbo data
+
+		senderWidth = COLOR_WIDTH; // DUSX resetting to work with color_ndi
+		senderHeight = COLOR_HEIGHT;
+		glGenBuffers(2, ndiPbo1);
+		glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, ndiPbo1[0]);
+		glBufferDataARB(GL_PIXEL_UNPACK_BUFFER_ARB, senderWidth*senderHeight * 4, 0, GL_STREAM_READ);
+		glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, ndiPbo1[1]);
+		glBufferDataARB(GL_PIXEL_UNPACK_BUFFER_ARB, senderWidth*senderHeight * 4, 0, GL_STREAM_READ);
+		glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0);
+		Pbo1Index = NextPbo1Index = 0;
+		bUsePBO1 = true; // Change to false to compare  // DUSX was originally true
+
+		//NDI SENDER 2 depthSize============================
+		//==================================================
+		// Initialize OpenGL pbos for asynchronous read of fbo data
+
+		senderWidth = DEPTH_WIDTH; // DUSX resetting to work with color_ndi
+		senderHeight = DEPTH_HEIGHT;
+		glGenBuffers(2, ndiPbo2);
+		glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, ndiPbo2[0]);
+		glBufferDataARB(GL_PIXEL_UNPACK_BUFFER_ARB, senderWidth*senderHeight * 4, 0, GL_STREAM_READ);
+		glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, ndiPbo2[1]);
+		glBufferDataARB(GL_PIXEL_UNPACK_BUFFER_ARB, senderWidth*senderHeight * 4, 0, GL_STREAM_READ);
+		glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0);
+		Pbo2Index = NextPbo2Index = 0;
+		bUsePBO2 = true; // Change to false to compare  // DUSX was originally true
+	}
+else {
+	NDIlock = true;
+}
+	// NDI setup DONE ^ ^ ^ * * * * * * * * * *
+	// NDI setup DONE ^ ^ ^ * * * * * * * * * *
+	// NDI setup DONE ^ ^ ^ * * * * * * * * * *
 }
 
 //--------------------------------------------------------------
@@ -223,7 +247,7 @@ void ofApp::update() {
 	coordinateMapper->MapDepthFrameToColorSpace(DEPTH_SIZE, (UINT16*)depthPix.getPixels(), DEPTH_SIZE, (ColorSpacePoint*)colorCoords.data());
 
 	// Loop through the depth image
-	if (spoutKeyed) {
+	if (spoutKeyed || ndiKeyed) {
 		for (int y = 0; y < DEPTH_HEIGHT; y++) {
 			for (int x = 0; x < DEPTH_WIDTH; x++) {
 				int index = (y * DEPTH_WIDTH) + x;
@@ -391,16 +415,21 @@ void ofApp::draw() {
 	{
 		// Draw Depth Source
 		// TODO: brighten depth image. https://github.com/rickbarraza/KinectV2_Lessons/tree/master/3_MakeRawDepthBrigther
-		// MORE: https://forum.openframeworks.cc/t/kinect-v2-pixel-depth-and-color/18974/4
-		//kinect.getDepthSource()->draw(0, 0, DEPTH_WIDTH, DEPTH_HEIGHT);  // note that the depth texture is RAW so may appear dark
+		// MORE: https://forum.openframeworks.cc/t/kinect-v2-pixel-depth-and-color/18974/4 
 
 		fboDepth.begin(); // start drawing to off screenbuffer
 		ofClear(255, 255, 255, 0);
-		kinect.getDepthSource()->draw(0, 0, DEPTH_WIDTH, DEPTH_HEIGHT);
+		kinect.getDepthSource()->draw(0, 0, DEPTH_WIDTH, DEPTH_HEIGHT);  // note that the depth texture is RAW so may appear dark
 		fboDepth.end();
 		//Spout
 		if (spoutDepth) {
-			spout.sendTexture(fboDepth.getTextureReference(), "kv2_depth");
+			spout.sendTexture(fboDepth.getTextureReference(), depth_StreamName);
+		}
+		// NDI
+		if (ndiDepth && ndiActive && !NDIlock) {
+			// Set the sender name
+			strcpy(senderName, depth_StreamName.c_str()); // convert from std string to cstring
+			sendNDI(ndiSender3, fboDepth, bUsePBO2, DEPTH_WIDTH, DEPTH_HEIGHT, senderName, depth_ndiBuffer, depth_idx);
 		}
 		//Draw from FBO
 		fboDepth.draw(0, 0, previewWidth, previewHeight);
@@ -420,9 +449,11 @@ void ofApp::draw() {
 		}
 
 		//NDI
-		// Set the sender name
-		strcpy(senderName, color_StreamName.c_str()); // convert from std string to cstring
-		sendNDI(ndiSender1, fboColor, bUsePBO1, COLOR_WIDTH, COLOR_HEIGHT, senderName, color_ndiBuffer, color_idx);
+		if (ndiColor && ndiActive && !NDIlock) {
+			// Set the sender name
+			strcpy(senderName, color_StreamName.c_str()); // convert from std string to cstring
+			sendNDI(ndiSender1, fboColor, bUsePBO1, COLOR_WIDTH, COLOR_HEIGHT, senderName, color_ndiBuffer, color_idx);
+		}
 
 		//Draw from FBO to UI
 		fboColor.draw(previewWidth, 0 + colorTop, previewWidth, colorHeight);
@@ -433,11 +464,6 @@ void ofApp::draw() {
 		// Draw IR Source
 		kinect.getInfraredSource()->draw(0, previewHeight, DEPTH_WIDTH, DEPTH_HEIGHT);
 		//kinect.getLongExposureInfraredSource()->draw(0, previewHeight, previewWidth, previewHeight);
-
-		// NDI
-		// Set the sender name
-		strcpy(senderName, infrared_StreamName.c_str()); // convert from std string to cstring
-		sendNDI(ndiSender3, fboDepth, bUsePBO2, DEPTH_WIDTH, DEPTH_HEIGHT, senderName, infrared_ndiBuffer, infrared_idx);
 	}
 
 	{
@@ -452,9 +478,11 @@ void ofApp::draw() {
 		}
 
 		// NDI
-		// Set the sender name
-		strcpy(senderName, cutout_StreamName.c_str()); // convert from std string to cstring
-		sendNDI(ndiSender2, fboDepth, bUsePBO2, DEPTH_WIDTH, DEPTH_HEIGHT, senderName, cutout_ndiBuffer, cutout_idx);
+		if (ndiCutOut && ndiActive && !NDIlock){
+			// Set the sender name
+			strcpy(senderName, cutout_StreamName.c_str()); // convert from std string to cstring
+			sendNDI(ndiSender2, fboDepth, bUsePBO2, DEPTH_WIDTH, DEPTH_HEIGHT, senderName, cutout_ndiBuffer, cutout_idx);
+		}
 
 		//Draw from FBO
 		fboDepth.draw(previewWidth, previewHeight, previewWidth, previewHeight);
@@ -485,6 +513,14 @@ void ofApp::draw() {
 			ss << "and, a body is being tracked.";
 			ofDrawBitmapStringHighlight(ss.str(), previewWidth * 2 + 20, previewHeight - (previewHeight / 2 + 60));
 		}
+
+		// NDI
+		if (ndiKeyed && ndiActive && !NDIlock) {
+			// Set the sender name
+			strcpy(senderName, keyed_StreamName.c_str()); // convert from std string to cstring
+			sendNDI(ndiSender4, fboDepth, bUsePBO2, DEPTH_WIDTH, DEPTH_HEIGHT, senderName, keyed_ndiBuffer, keyed_idx);
+		}
+
 	}
 
 	{
@@ -495,7 +531,7 @@ void ofApp::draw() {
 	ss.str("");
 	ss << "fps : " << ofGetFrameRate();
 	if (!bHaveAllStreams) ss << endl << "Not all streams detected!";
-	ofDrawBitmapStringHighlight(ss.str(), 20, previewHeight * 2 - 20);
+	ofDrawBitmapStringHighlight(ss.str(), 20, previewHeight * 2 - 25);
 
 	ss.str("");
 	ss << "Keyed FX : cpu heavy";
@@ -522,11 +558,18 @@ void ofApp::draw() {
 	ss << "Infrared : ";
 	ofDrawBitmapStringHighlight(ss.str(), 20, previewHeight + 20);
 
+	if (ndiActive && NDIlock) {
+		// NDI active has been toggled, and a restart of the app is required to use NDI
+		ss.str("");
+		ss << "The application must be relaunched to allow the NDI fucntions.";
+		ofDrawBitmapStringHighlight(ss.str(), 20, previewHeight * 2 - 10, ofColor::black, ofColor::red);
+	}
+
 	gui.draw();
 }
 
 void ofApp::exit() {
-	gui.saveToFile("settings.xml");
+	gui.saveToFile(guiFile);
 	if (ndiPbo1[0]) glDeleteBuffers(2, ndiPbo1); // clean up NDI_1 - HD
 	if (ndiPbo2[0]) glDeleteBuffers(2, ndiPbo2); // clean up NDI_2 - DepthsSize
 }
@@ -585,7 +628,7 @@ void ofApp::body2JSON(vector<ofxKinectForWindows2::Data::Body> bodies, const cha
 
 		  // TODO: add below features to non Json OSC
 		  // body.activity ?? contains more.. worth looking into 
-		newData = "\"LH-state\":" + to_string(body.leftHandState);
+		newData = "\"LH-st8\":" + to_string(body.leftHandState);
 		newData = "{" + newData + "}";
 		// if tracked add ',' and bdata, otherwise bdata = newData. Fixes trailing ',' for non tracked bodies
 		if (!body.tracked) {
@@ -595,11 +638,11 @@ void ofApp::body2JSON(vector<ofxKinectForWindows2::Data::Body> bodies, const cha
 			bdata = newData + "," + bdata;
 		}
 
-		newData = "\"RH-state\":" + to_string(body.rightHandState);
+		newData = "\"RH-8\":" + to_string(body.rightHandState);
 		newData = "{" + newData + "}";
 		bdata = newData + "," + bdata;
 
-		newData = "\"trackingID\":" + to_string(body.trackingId);
+		newData = "\"ID\":" + to_string(body.trackingId);
 		newData = "{" + newData + "}";
 		bdata = newData + "," + bdata;
 
@@ -646,13 +689,7 @@ void ofApp::sendNDI(ofxNDIsender & ndiSender_, ofFbo & sourceFBO_,
 	// If you did not set the sender pixel format to RGBA in CreateSender
 	// you can convert to bgra within SendImage (specify true for bSwapRB)
 	if (ndiSender_.SendImage(ndiBuffer_[idx_].getPixels(), senderWidth_, senderHeight_)) {
-		// Show what it is sending
-		char str[256];
-		sprintf(str, "Sending as : [%s] (%dx%d)", senderName, senderWidth_, senderHeight_);
-		ofDrawBitmapString(str, 20, 50);
-		// Show fps
-		sprintf(str, "fps: %3.3d", (int)ofGetFrameRate());
-		ofDrawBitmapString(str, 20, 70); // ofGetWidth() - 120
+		// Send Image was successful
 	}
 }
 

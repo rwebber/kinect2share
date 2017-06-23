@@ -53,12 +53,16 @@ public:
 
 	//  *** added from NDI sender example ***
 	// NDI definitions
+	bool NDIlock; // used to block NDI functions incase the ON/OFF param is activated.
 	ofxNDIsender ndiSender1;    // NDI sender object, HD format (color_)
 	ofxNDIsender ndiSender2;	// Depth-Image format (cutout_)
 	ofxNDIsender ndiSender3;	// INFRARED
+	ofxNDIsender ndiSender4;	// KEYED
 	string color_StreamName;
 	string cutout_StreamName;
-	string infrared_StreamName;
+	string depth_StreamName;
+	string keyed_StreamName;
+	string infrared_StreamName;  // TODO add this.. currently not setup
 	char senderName[256];      // for conversions... char[] required for ndiSender functions
 
 	// NOTE using W+H defined already
@@ -70,18 +74,22 @@ public:
 	// NOTE: need a Buffer array and a index used for async for EACH NDIstream being created
 	ofPixels color_ndiBuffer[2];     // Two pixel buffers for async sending
 	ofPixels cutout_ndiBuffer[2];     // Two pixel buffers for async sending
-	ofPixels infrared_ndiBuffer[2];     // Two pixel buffers for async sending
+	ofPixels depth_ndiBuffer[2];     // Two pixel buffers for async sending
+	ofPixels keyed_ndiBuffer[2];     // Two pixel buffers for async sending
+	//ofPixels infrared_ndiBuffer[2];     // Two pixel buffers for async sending
 	int color_idx;                   // Index used for async buffer swapping			???
 	int cutout_idx;
-	int infrared_idx;
+	int depth_idx;
+	int keyed_idx;
+	// int infrared_idx;
 
-	// PBO and control vars for ndiSender1
+	// PBO and control vars for ndiSender1 HD format
 	GLuint ndiPbo1[2];
 	int Pbo1Index;
 	int NextPbo1Index;
 	bool bUsePBO1;
 
-	// PBO and control vars for ndiSender1
+	// PBO and control vars for ndiSender2+ DepthImage sized
 	GLuint ndiPbo2[2];
 	int Pbo2Index;
 	int NextPbo2Index;
@@ -109,6 +117,13 @@ public:
 	ofxToggle spoutColor;
 	ofxToggle spoutKeyed;
 	ofxToggle spoutDepth;
+
+	ofxGuiGroup NDIgroup;
+	ofxToggle ndiActive;
+	ofxToggle ndiCutOut;
+	ofxToggle ndiColor;
+	ofxToggle ndiKeyed;
+	ofxToggle ndiDepth;
 
 
 	// added for coordmapping
