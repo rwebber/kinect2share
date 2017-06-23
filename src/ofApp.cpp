@@ -638,7 +638,7 @@ void ofApp::body2JSON(vector<ofxKinectForWindows2::Data::Body> bodies, const cha
 			bdata = newData + "," + bdata;
 		}
 
-		newData = "\"RH-8\":" + to_string(body.rightHandState);
+		newData = "\"RH-st8\":" + to_string(body.rightHandState);
 		newData = "{" + newData + "}";
 		bdata = newData + "," + bdata;
 
