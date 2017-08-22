@@ -9,7 +9,16 @@ The goal of this project is to make as many Kinect2 features available to creati
 
 Specific care has been given to providing a demo file for use with the [Isadora creativity server](http://troikatronix.com/).
 This demo file provides basic functional examples that Isadora users can build upon.
-Currently the [Isadora version 2.5 beta](http://troikatronix.com/isa25beta/) is required to run the demo file.
+Currently the [Isadora version 2.5.x ](http://troikatronix.com/get-it/) is required to run the demo file.
+
+Since this project is developed using open standards it can easily be used with other popular tools/frameworks including: processing, resolume, max msp, touchdesigner, vvvv, qlab, and many more.
+Additionally Kinect2share allows sharing both the skeleton data and multiple video feeds over a network connection. 
+This allows the Kinect V2 data to be used by Apple / Mac computers. (note this requires 2 computers, 1 mac and 1 pc)
+To connect a Mac to a PC running kinect2share you will require:
+- network router ( not required, but much easier than a direct PC/Mac network connection )
+- to access the video feeds. Syphon2NDI for the Mac ( http://techlife.sg/TCPSyphon/ ) 
+- to access the Skeleton data. Configure the OSC to broadcast. ( see: https://forum.openframeworks.cc/t/broadcasting-with-ofxosc/1625/3 )
+Both video and skeleton data can be shared over a wireless connection, however; video performance is much better with a gigabit ethernet connection.
 
 ## Features
 ### Video
