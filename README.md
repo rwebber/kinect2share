@@ -1,5 +1,5 @@
 #### kinect2share
-Share skeleton and video data from the Kinect V2 with Isadora and any other software which supports OSC (Open Sound Control) and Spout. 
+Share skeleton and video data from the Kinect V2 with Isadora or any other software which supports OSC (Open Sound Control), Spout, and/or NDI.
 
 ![Screen Shot including Isadora sample file](https://raw.githubusercontent.com/rwebber/kinect2share/master/screenshots/sampleapp1.png)
 
@@ -42,6 +42,13 @@ MIT License http://en.wikipedia.org/wiki/MIT_License
 - [video] Keyed via GLSL
 - ~~[OSC] add body features (eg hands open/closed)~~
 - [video] add option to adjust levels for depth image / IR images
+
+
+### Donations Accepted
+***
+> [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CUG2B3AK7WYVQ)
+***
+
 
 ## Notes
 1. The release version requires the Kinect V2 SDK. https://www.microsoft.com/en-us/download/details.aspx?id=44561
