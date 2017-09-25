@@ -42,6 +42,11 @@ void ofApp::setup() {
 	ofSetFrameRate(30);
 	ofSetVerticalSync(true);
 
+	color_StreamName = "kv2_color";
+	cutout_StreamName = "kv2_cutout";
+	depth_StreamName = "kv2_depth";
+	keyed_StreamName = "kv2_keyed";
+
 	kinect.open();
 	kinect.initDepthSource();
 	kinect.initColorSource();
@@ -101,7 +106,6 @@ void ofApp::setup() {
 	
 	// HostField.addListener(this, &ofApp::HostFieldChanged);
 
-
 	// OSC setup  * * * * * * * * * * * * *
 	// OSC setup  * * * * * * * * * * * * *
 	// OSC setup  * * * * * * * * * * * * *
@@ -141,7 +145,6 @@ void ofApp::setup() {
 		color_ndiBuffer[1].allocate(senderWidth, senderHeight, 4);
 
 		//// Create a new sender
-		color_StreamName = "kv2_color";
 		strcpy(senderName, color_StreamName.c_str());
 		ndiSender1.CreateSender(senderName, senderWidth, senderHeight, NDIlib_FourCC_type_RGBA); //// Specify RGBA format here
 		cout << "Created NDI sender [" << senderName << "] (" << senderWidth << "x" << senderHeight << ")" << endl;
@@ -157,7 +160,6 @@ void ofApp::setup() {
 		cutout_ndiBuffer[1].allocate(senderWidth, senderHeight, 4);
 
 		// Create a new sender
-		cutout_StreamName = "kv2_cutout";
 		strcpy(senderName, cutout_StreamName.c_str());
 		ndiSender2.CreateSender(senderName, senderWidth, senderHeight, NDIlib_FourCC_type_RGBA); //// Specify RGBA format here
 		cout << "Created NDI sender [" << senderName << "] (" << senderWidth << "x" << senderHeight << ")" << endl;
@@ -173,7 +175,6 @@ void ofApp::setup() {
 		depth_ndiBuffer[1].allocate(senderWidth, senderHeight, 4);
 
 		// Create a new sender
-		depth_StreamName = "kv2_depth";
 		strcpy(senderName, depth_StreamName.c_str());
 		ndiSender3.CreateSender(senderName, senderWidth, senderHeight, NDIlib_FourCC_type_RGBA); //// Specify RGBA format here
 		cout << "Created NDI sender [" << senderName << "] (" << senderWidth << "x" << senderHeight << ")" << endl;
@@ -189,7 +190,6 @@ void ofApp::setup() {
 		keyed_ndiBuffer[1].allocate(senderWidth, senderHeight, 4);
 
 		// Create a new sender
-		keyed_StreamName = "kv2_keyed";
 		strcpy(senderName, keyed_StreamName.c_str());
 		ndiSender4.CreateSender(senderName, senderWidth, senderHeight, NDIlib_FourCC_type_RGBA); //// Specify RGBA format here
 		cout << "Created NDI sender [" << senderName << "] (" << senderWidth << "x" << senderHeight << ")" << endl;

@@ -26,9 +26,10 @@ Supported (provided via Spout):
 - Black and White Mask (512 x 424)
 - Color (1920 x 1080)
 - Keyed (512 x 424) *CPU process
+- Depth Image (512 x 424)
 
 ### OSC : Skeleton
-Supported (provided via Spout):
+Supported:
 - Body data as JSON
 - Body elements as individual OSC addresses
 
@@ -42,6 +43,7 @@ MIT License http://en.wikipedia.org/wiki/MIT_License
 - [video] Keyed via GLSL
 - ~~[OSC] add body features (eg hands open/closed)~~
 - [video] add option to adjust levels for depth image / IR images
+- ~~[NDI] network video sharing~~
 
 
 ### Donations Accepted
@@ -59,6 +61,8 @@ Additional ofx addons are used:
 - ofxOsc (shares skeleton data) *core addon
 - ofxInputField (adds text field for editing of OSC port & ip) https://github.com/fx-lange/ofxInputField
 - ofxSpout2 (shares video with other applications) https://github.com/Kj1/ofxSpout2
+- ofxNDI (networked video sharing) https://github.com/leadedge/ofxNDI
+- ofxKinectForWindows2 https://github.com/elliotwoods/ofxKinectForWindows2
 
 
 
