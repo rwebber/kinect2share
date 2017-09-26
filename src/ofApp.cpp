@@ -85,8 +85,9 @@ void ofApp::setup() {
 
 	OSCgroup.setup("OSC");
 	OSCgroup.add(jsonGrouped.setup("OSC as JSON", true));
-	OSCgroup.add(HostField.setup("OSC host ip", "localhost"));
-	OSCgroup.add(oscPort.setup("OSC port", 1234));
+	OSCgroup.add(HostField.setup("Host ip", "localhost"));
+	OSCgroup.add(oscPort.setup("Output port", 1234));
+	OSCgroup.add(oscPortIn.setup("Input port", 4321));
 	gui.add(&OSCgroup);
 	
 	SPOUTgroup.setup("Spout");
@@ -117,7 +118,6 @@ void ofApp::setup() {
 	// OSC setup  * * * * * * * * * * * * *
 	oscSender.disableBroadcast();
 	oscSender.setup(HostField, oscPort);
-	int oscPortIn = 4321; // TODO: add to config UI
 	oscReceiver.setup(oscPortIn);
 
 	// NDI setup * * * * * * * * * * * * * 
@@ -460,7 +460,6 @@ void ofApp::draw() {
 		// Draw Depth Source
 		// TODO: brighten depth image. https://github.com/rickbarraza/KinectV2_Lessons/tree/master/3_MakeRawDepthBrigther
 		// MORE: https://forum.openframeworks.cc/t/kinect-v2-pixel-depth-and-color/18974/4 
-
 		fboDepth.begin(); // start drawing to off screenbuffer
 		ofClear(255, 255, 255, 0);
 		kinect.getDepthSource()->draw(0, 0, DEPTH_WIDTH, DEPTH_HEIGHT);  // note that the depth texture is RAW so may appear dark
@@ -482,7 +481,6 @@ void ofApp::draw() {
 
 	{
 		// Draw Color Source
-		
 		fboColor.begin(); // start drawing to off screenbuffer
 		ofClear(255, 255, 255, 0);
 		kinect.getColorSource()->draw(0, 0, COLOR_WIDTH, COLOR_HEIGHT);
@@ -491,14 +489,12 @@ void ofApp::draw() {
 		if (spoutColor) {
 			spout.sendTexture(fboColor.getTextureReference(), color_StreamName);
 		}
-
 		//NDI
 		if (ndiColor && ndiActive && !NDIlock) {
 			// Set the sender name
 			strcpy(senderName, color_StreamName.c_str()); // convert from std string to cstring
 			sendNDI(ndiSender1, fboColor, bUsePBO1, COLOR_WIDTH, COLOR_HEIGHT, senderName, color_ndiBuffer, color_idx);
 		}
-
 		//Draw from FBO to UI
 		fboColor.draw(previewWidth, 0 + colorTop, previewWidth, colorHeight);
 		//fboColor.clear();
@@ -520,14 +516,12 @@ void ofApp::draw() {
 		if (spoutCutOut) {
 			spout.sendTexture(fboDepth.getTextureReference(), "kv2_cutout");
 		}
-
 		// NDI
 		if (ndiCutOut && ndiActive && !NDIlock){
 			// Set the sender name
 			strcpy(senderName, cutout_StreamName.c_str()); // convert from std string to cstring
 			sendNDI(ndiSender2, fboDepth, bUsePBO2, DEPTH_WIDTH, DEPTH_HEIGHT, senderName, cutout_ndiBuffer, cutout_idx);
 		}
-
 		//Draw from FBO
 		fboDepth.draw(previewWidth, previewHeight, previewWidth, previewHeight);
 		//fboDepth.clear();
@@ -535,8 +529,6 @@ void ofApp::draw() {
 
 	{
 		// greenscreen/keyed fx from coordmaping
-		//fboDepth.clear();
-		//ofClear(255, 255, 255, 0);
 		fboDepth.begin(); // start drawing to off screenbuffer
 		ofClear(255, 255, 255, 0);
 		foregroundImg.draw(0, 0, DEPTH_WIDTH, DEPTH_HEIGHT);
@@ -548,8 +540,7 @@ void ofApp::draw() {
 			//Draw from FBO, removed if not checked
 			ofEnableBlendMode(OF_BLENDMODE_ALPHA);
 			fboDepth.draw(previewWidth * 2, 0, previewWidth, previewHeight);
-		}
-		else {
+		} else {
 			//ofSetFrameRate(60);
 			ss.str("");
 			ss << "Keyed image only shown when" << endl;
@@ -557,14 +548,12 @@ void ofApp::draw() {
 			ss << "and, a body is being tracked.";
 			ofDrawBitmapStringHighlight(ss.str(), previewWidth * 2 + 20, previewHeight - (previewHeight / 2 + 60));
 		}
-
 		// NDI
 		if (ndiKeyed && ndiActive && !NDIlock) {
 			// Set the sender name
 			strcpy(senderName, keyed_StreamName.c_str()); // convert from std string to cstring
 			sendNDI(ndiSender4, fboDepth, bUsePBO2, DEPTH_WIDTH, DEPTH_HEIGHT, senderName, keyed_ndiBuffer, keyed_idx);
 		}
-
 	}
 
 	{
@@ -654,8 +643,12 @@ void ofApp::HostFieldChanged() {
 	cout << "fieldChange" << endl;
 	oscSender.disableBroadcast();
 	oscSender.setup(HostField, oscPort);
+	oscReceiver.setup(oscPortIn);
 	cout << "updated" << endl;
+	oscSendMsg("fieldUpdated", "/kv2status/");
 }
+
+//--------------------------------------------------------------
 void ofApp::body2JSON(vector<ofxKinectForWindows2::Data::Body> bodies, const char * jointNames[]) {
 	// TODO: create factory
 	for (auto body : bodies) {
@@ -720,7 +713,7 @@ void ofApp::body2JSON(vector<ofxKinectForWindows2::Data::Body> bodies, const cha
 }
 
 // NDI
-// makes sending more modular
+// straight from ofxNDI examples
 void ofApp::sendNDI(ofxNDIsender & ndiSender_, ofFbo & sourceFBO_, 
 	bool bUsePBO_, int senderWidth_, int senderHeight_, char senderName_[256], ofPixels ndiBuffer_[], int idx_)
 {
@@ -751,9 +744,8 @@ void ofApp::sendNDI(ofxNDIsender & ndiSender_, ofFbo & sourceFBO_,
 
 // NDI
 // Asynchronous Read-back
-//
 // adapted from : http://www.songho.ca/opengl/gl_pbo.html
-//
+// straight from ofxNDI examples
 bool ofApp::ReadFboPixels(ofFbo fbo, unsigned int width, unsigned int height, unsigned char *data)
 {
 	void *pboMemory;
@@ -823,7 +815,6 @@ void ofApp::keyReleased(int key) {
 		cout << "ENTER" << endl;
 		HostFieldChanged();
 	}
-
 }
 
 //--------------------------------------------------------------
@@ -855,6 +846,7 @@ void ofApp::mouseReleased(int x, int y, int button) {
 void ofApp::windowResized(int w, int h) {
 	// textField = ofToString(w) + "x" + ofToString(h);
 }
+
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo) {
 

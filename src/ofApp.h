@@ -134,7 +134,8 @@ public:
 	ofxGuiGroup OSCgroup;
 	ofxToggle jsonGrouped;
 	// ofxInputField
-	ofxIntField oscPort;
+	ofxIntField oscPort; // Output
+	ofxIntField oscPortIn;
 	ofxTextField HostField;
 
 	ofxGuiGroup SPOUTgroup;
