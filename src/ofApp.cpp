@@ -36,6 +36,8 @@ string guiFile = "settings.xml";
 
 // TODO: look into https://forum.openframeworks.cc/t/ofxkinectforwindows2-depth-threshold-for-blob-tracking/19012/2
 
+// TODO: refactor 'kv2status' into user defineable address
+
 //--------------------------------------------------------------
 void ofApp::setup() {
 	ofSetWindowTitle("kinect2share");
@@ -103,6 +105,10 @@ void ofApp::setup() {
 	gui.add(&NDIgroup);
 
 	gui.loadFromFile(guiFile);
+	//if (!gui.loadFromFile(guiFile)) {
+	//	ofLogError("kv2") << "Unable to load settings xml";
+	//	ofExit();
+	//}
 	
 	// HostField.addListener(this, &ofApp::HostFieldChanged);
 
@@ -111,7 +117,8 @@ void ofApp::setup() {
 	// OSC setup  * * * * * * * * * * * * *
 	oscSender.disableBroadcast();
 	oscSender.setup(HostField, oscPort);
-
+	int oscPortIn = 4321; // TODO: add to config UI
+	oscReceiver.setup(oscPortIn);
 
 	// NDI setup * * * * * * * * * * * * * 
 	// NDI setup * * * * * * * * * * * * * 
@@ -235,6 +242,23 @@ else {
 
 //--------------------------------------------------------------
 void ofApp::update() {
+	// get OSC messages
+	while (oscReceiver.hasWaitingMessages()) {
+		ofxOscMessage m;
+		oscReceiver.getNextMessage(&m);
+
+		if (m.getAddress() == "/app-exit") {
+			bool trigger = m.getArgAsInt(0);
+			//string s = m.getArgAsString(0);
+			if (trigger) {
+				exit();
+				std::exit(0);
+				oscSendMsg("exit", "/kv2status/");
+			}
+		}
+	}
+
+	//KV2
 	kinect.update();
 
 	// Get pixel data
@@ -592,6 +616,18 @@ void ofApp::exit() {
 	gui.saveToFile(guiFile);
 	if (ndiPbo1[0]) glDeleteBuffers(2, ndiPbo1); // clean up NDI_1 - HD
 	if (ndiPbo2[0]) glDeleteBuffers(2, ndiPbo2); // clean up NDI_2 - DepthsSize
+	oscSendMsg("closed", "/kv2status/");
+}
+
+//--- OSC send message -----------------------------------------------------------
+// Requires the address be wrapped in forward slashes: eg "/status/"
+void ofApp::oscSendMsg(string message, string address)
+{
+	// send OSC message // oscSendMsg("no device","/status/");
+	ofxOscMessage m;
+	m.setAddress(address);
+	m.addStringArg(message);
+	oscSender.sendMessage(m);
 }
 
 string ofApp::escape_quotes(const string &before)

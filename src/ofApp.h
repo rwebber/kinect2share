@@ -122,6 +122,11 @@ public:
 
 	// OSC
 	ofxOscSender oscSender;
+	ofxOscReceiver oscReceiver;
+
+	// custom functions DX
+	void oscSendMsg(std::string message, std::string address);
+
 
 	// GUI
 	ofxPanel gui;
