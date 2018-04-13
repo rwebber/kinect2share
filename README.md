@@ -1,3 +1,4 @@
+
 #### kinect2share
 Share skeleton and video data from the Kinect V2 with Isadora or any other software which supports OSC (Open Sound Control), Spout, and/or NDI.
 
@@ -53,8 +54,12 @@ MIT License http://en.wikipedia.org/wiki/MIT_License
 
 
 ## Notes
-1. The release version requires the Kinect V2 SDK. https://www.microsoft.com/en-us/download/details.aspx?id=44561
-2. To work with the code, you'll need the Kinect v2 SDK and the NewTek NDI sdk http://pages.newtek.com/NDI-Developers.html
+1. The release version requires the Kinect V2 SDK. 
+  https://www.microsoft.com/en-us/download/details.aspx?id=44561
+2. The x86 2015 c++ redistributable is required from Microsoft as well. 
+  https://www.microsoft.com/en-us/download/confirmation.aspx?id=48145
+3. To work with the code, you'll need the Kinect v2 SDK and the NewTek NDI sdk 
+  http://pages.newtek.com/NDI-Developers.html
 
 Additional ofx addons are used:
 - ofxGui (create parameters gui) *core addon
